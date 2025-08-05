@@ -3,6 +3,7 @@ import React from 'react'
 import { RiPlayLargeFill } from "react-icons/ri";
 import { FiUsers, FiMusic, FiVolume2, FiPlay } from "react-icons/fi";
 import { LuCopy } from "react-icons/lu";
+import Link from 'next/link';
 
 const Hero = () => {
     return (
@@ -75,10 +76,10 @@ const Hero = () => {
                 </div>
 
                 {/* start quiz button */}
-                <button className='px-3 text-sm md:px-4 py-2 text-white bg-[#8570C0] rounded-lg cursor-pointer transition-all duration-300 flex gap-2 items-center'>
+                <Link href={'/game'} className='px-3 text-sm md:px-4 py-2 text-white bg-[#8570C0] rounded-lg cursor-pointer transition-all duration-300 flex gap-2 items-center'>
                     <FiPlay />
                     Start now
-                </button>
+                </Link>
 
 
             </div>

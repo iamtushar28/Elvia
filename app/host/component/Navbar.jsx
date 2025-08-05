@@ -4,7 +4,7 @@ import { IoArrowBackOutline } from "react-icons/io5";
 
 const Navbar = () => {
     return (
-        <nav className='h-[66px] w-full px-2 md:px-8 text-white bg-[#8570C0E6] flex justify-between items-center fixed top-0 left-0 right-0 z-40'>
+        <nav className='h-[66px] w-full px-2 md:px-8 text-white bg-[#8570C0E6] flex justify-between items-center absolute top-0 left-0 right-0 z-50'>
 
             {/* logo */}
             <div className='flex gap-2 items-center'>
