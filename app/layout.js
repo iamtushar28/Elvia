@@ -1,4 +1,5 @@
 import "./globals.css";
+import ReduxProvider from "./provider/ReduxProvider";
 
 export const metadata = {
   title: "Elvia | Interactive quiz game",
@@ -9,7 +10,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="">{children}
+      <body className="">
+        <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>
   );

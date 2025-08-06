@@ -2,7 +2,7 @@ import React from 'react'
 import { LuTimer } from "react-icons/lu";
 import { RiDeleteBinLine, RiQuestionLine, RiCheckboxCircleLine } from "react-icons/ri";
 
-const Mcq = () => {
+const Mcq = ({ quizId, number, timeLimit, onDelete }) => {
     return (
         <div className='w-full h-auto pb-8 mt-6 bg-white rounded-lg border border-violet-300 overflow-hidden'>
 
@@ -12,7 +12,7 @@ const Mcq = () => {
                 <div className='flex gap-4'>
                     {/* question number */}
                     <h4 className='h-6 w-6 mt-2 text-violet-500 bg-violet-100 rounded-full text-center'>
-                        1
+                        {number}
                     </h4>
 
                     {/* question type name & Est. time */}
@@ -20,7 +20,7 @@ const Mcq = () => {
                         <h2 className='text-zinc-900'>Multiple Choice</h2>
                         <p className='text-sm text-zinc-500 flex gap-1 items-center'>
                             <LuTimer />
-                            20 sec
+                            {timeLimit} sec
                         </p>
                     </div>
 
@@ -31,7 +31,9 @@ const Mcq = () => {
                 </div>
 
                 {/* delete question button */}
-                <button className='h-10 w-10 text-lg hover:text-red-500 hover:bg-red-100 rounded-full cursor-pointer transition-all duration-300 flex justify-center items-center'>
+                <button
+                 onClick={onDelete}
+                className='h-10 w-10 text-lg hover:text-red-500 hover:bg-red-100 rounded-full cursor-pointer transition-all duration-300 flex justify-center items-center'>
                     <RiDeleteBinLine />
                 </button>
 

@@ -1,7 +1,6 @@
 'use client'
 import React from 'react'
-import { RiPlayLargeFill } from "react-icons/ri";
-import { FiUsers, FiMusic, FiVolume2, FiPlay } from "react-icons/fi";
+import { FiUsers, FiPlay } from "react-icons/fi";
 import { LuCopy } from "react-icons/lu";
 import Link from 'next/link';
 import AnimatedBackground from '../../components/AnimatedBackground';
@@ -11,8 +10,8 @@ const Hero = () => {
     return (
         <section className='w-full h-auto min-h-[100vh] flex gap-3 flex-col justify-center items-center relative'>
 
+            {/* blob animation */}
             <AnimatedBackground />
-
 
             {/* total player */}
             <div className='w-full absolute right-2 md:right-4 top-22 flex flex-col gap-3 items-end'>

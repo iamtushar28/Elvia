@@ -1,6 +1,7 @@
 import React from 'react'
 import { LuCopy } from "react-icons/lu";
 import { IoArrowBackOutline } from "react-icons/io5";
+import Link from 'next/link';
 
 const Navbar = () => {
     return (
@@ -10,9 +11,9 @@ const Navbar = () => {
             <div className='flex gap-2 items-center'>
 
                 {/* back button */}
-                <button className='p-2 text-xl font-semibold hover:bg-white/20 rounded-full flex items-center gap-2 cursor-pointer transition-all duration-200'>
+                <Link href={'/create'} className='p-2 text-xl font-semibold hover:bg-white/20 rounded-full flex items-center gap-2 cursor-pointer transition-all duration-200'>
                     <IoArrowBackOutline />
-                </button>
+                </Link>
 
                 <h1 className='text-xl font-semibold'>
                     Elvia Creator
