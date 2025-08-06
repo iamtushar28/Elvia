@@ -4,10 +4,10 @@ import QuestionBox from "./component/QuestionBox";
 
 const page = () => {
   return (
-    <>
+    <main className="bg-gradient-to-b from-violet-50 to-white">
       <Navbar />
       <QuestionBox/>
-    </>
+    </main>
   );
 };
 

@@ -3,3 +3,40 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.animated-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.blob {
+  position: absolute;
+  opacity: 0.5;
+  animation: float 20s ease-in-out infinite, rotate 60s linear infinite;
+  transform-origin: center;
+  border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%; /* makes it look blobby */
+}
+
+/* Soft pastel shades (like Tailwind 100) */
+.pink    { background-color: #fcbee1; }
+.violet  { background-color: #cbc0fc; }
+.green   { background-color: #c1f9d6; }
+.purple  { background-color: #d8bcf6; }
+.yellow  { background-color: #fffaaf; }
+.blue  { background-color: #a2a8ff96; }
+.orange  { background-color: #f3d296; }
+.red  { background-color: #f4aca1; }
+
+@keyframes float {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(20px, -20px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes rotate {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

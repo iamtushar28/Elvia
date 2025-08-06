@@ -5,7 +5,7 @@ import { FiUsers } from "react-icons/fi";
 
 const QuizInfo = () => {
     return (
-        <section className='w-full px-3 md:px-10 lg:px-36 mt-8'>
+        <section className='w-full pt-[66px] px-3 md:px-10 lg:px-36 mt-8'>
 
             {/* quiz info card */}
             <div className='w-full h-auto px-3 md:px-6 py-5 md:py-8 bg-white rounded-lg shadow flex flex-col gap-4 md:gap-6'>
@@ -30,7 +30,7 @@ const QuizInfo = () => {
                     </div>
 
                     {/* total estimate time to complete quiz game */}
-                    <h4 className='text-zinc-800 text-sm md:text-base flex gap-1 md:gap-2 items-center'>
+                    <h4 className='text-zinc-800 text-xs md:text-base flex gap-1 md:gap-2 items-center'>
                         <LuTimer className='text-xl text-[#8570C0]' />
                         Est. time: 30 sec
                     </h4>

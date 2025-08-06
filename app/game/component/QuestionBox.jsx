@@ -6,7 +6,7 @@ import FillBlankQuestionCard from './FillBlankQuestionCard';
 
 const QuestionBox = () => {
     return (
-        <section className='min-h-screen h-auto pt-20 pb-8 px-4 w-full flex justify-center'>
+        <section className='min-h-screen h-auto pt-20 pb-8 px-4 w-full flex justify-center relative'>
 
             <div className='w-full md:w-[70%] h-fit flex flex-col gap-6 md:gap-10'>
 
@@ -23,11 +23,11 @@ const QuestionBox = () => {
                 </div>
 
                 {/* Question card */}
-                <TrueFalseQuestionCard />
+                {/* <TrueFalseQuestionCard /> */}
 
                 <McqQuestionCard />
 
-                <FillBlankQuestionCard />
+                {/* <FillBlankQuestionCard /> */}
 
             </div>
 

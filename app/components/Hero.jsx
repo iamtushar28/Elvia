@@ -1,14 +1,27 @@
 import Link from 'next/link'
 import React from 'react'
+import AnimatedBackground from './AnimatedBackground'
 
 const Hero = () => {
     return (
-        <section className='w-full h-screen md:min-h-screen md:max-h-fit py-20 px-4 flex flex-col gap-20 justify-center items-center relative'>
+        <section className='w-full h-auto min-h-screen md:max-h-fit py-6 px-4 flex flex-col gap-12 justify-center items-center relative'>
+
+            {/* blob animation */}
+            <AnimatedBackground />
 
             {/* title section */}
-            <div className='flex flex-col gap-6 justify-center items-center'>
+            <div className='flex flex-col gap-4 justify-center items-center'>
+
+                {/* dog animation image */}
+                <iframe
+                    loading="lazy"
+                    sandbox="allow-scripts allow-same-origin"
+                    className='h-36'
+                    src="https://lottie.host/embed/f4b2a214-a8a6-4eac-9471-a03bf7f63e70/VlMWbTHlQb.lottie">
+                </iframe>
+
                 {/* hero title */}
-                <h1 className='text-6xl font-bold text-violet-500'>Elvia</h1>
+                <h1 className='text-6xl font-bold text-[#8570C0]'>Elvia</h1>
 
                 {/* description */}
                 <h4 className='w-full px-3 md:w-[385px] font-[500] text-[#374151] text-center'>An elegant, AI-powered quiz platform for creating, hosting, and joining real-time quizzes solo or with friends. Simple, smart, and interactive.</h4>
@@ -29,17 +42,19 @@ const Hero = () => {
 
                 </div>
 
+                <div className='bg-pink-100'></div>
+
                 <h6 className='text-zinc-500'>Or</h6>
 
                 {/* Create new quiz room button */}
-                <Link href={'/create'} className='w-full py-2 text-violet-500 border border-violet-300 hover:bg-violet-50 rounded-lg cursor-pointer transition-all duration-300 text-center'>
+                <Link href={'/create'} className='w-full py-2 text-[#8570C0] border border-[#8570C0] hover:bg-violet-50 rounded-lg cursor-pointer transition-all duration-300 text-center'>
                     + Create New Quiz
                 </Link>
 
             </div>
 
             {/* footer section */}
-            <div className='-mt-10 text-center'>
+            <div className='mt-8 text-center'>
                 <button className='text-sm text-zinc-500 hover:text-violet-400 cursor-pointer transition-all duration-300'>How to Play</button>
 
                 <p className='text-zinc-500 mt-2'>Copyright © 2025 | <span className='text-violet-400 cursor-pointer hover:underline'>Elvia</span></p>
