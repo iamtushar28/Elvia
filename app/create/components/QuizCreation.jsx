@@ -1,5 +1,6 @@
 'use client'
 import React, { useState } from 'react'
+import { useForm, FormProvider } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { addQuiz, removeQuiz } from '@/app/reduxStore/quizSlice';
 
@@ -18,21 +19,43 @@ const QuizCreation = () => {
     // Access all quiz items from Redux store
     const quizzes = useSelector((state) => state.quizzes.items);
 
+    const methods = useForm();
+    const {
+        handleSubmit,
+        control,
+        register,
+        setValue, // ✅ required for setting correct answer in MCQ
+        watch,     // optional: for debugging or dynamic behaviors
+        formState: { errors }
+    } = methods;
+
+
     // Render quiz creation component based on type
     const renderQuiz = (quiz, number) => {
-
         const handleRemove = () => dispatch(removeQuiz(quiz.id));
+        const commonProps = {
+            quizId: quiz.id,
+            number,
+            timeLimit: quiz.timeLimit,
+            onDelete: handleRemove,
+            control,
+            register,
+            setValue,   // ✅ pass this for correct answer logic
+            errors
+        };
+
 
         switch (quiz.type) {
-            case 'mcq':
-                return <Mcq quizId={quiz.id} number={number} timeLimit={quiz.timeLimit} onDelete={handleRemove} />;
-            case 'truefalse':
-                return <TrueFalse quizId={quiz.id} number={number} timeLimit={quiz.timeLimit} onDelete={handleRemove} />;
-            case 'fillblank':
-                return <FillInBlank quizId={quiz.id} number={number} timeLimit={quiz.timeLimit} onDelete={handleRemove} />;
-            default:
-                return null;
+            case 'mcq': return <Mcq {...commonProps} />;
+            case 'truefalse': return <TrueFalse {...commonProps} />;
+            case 'fillblank': return <FillInBlank {...commonProps} />;
+            default: return null;
         }
+    };
+
+    const onSubmit = (data) => {
+        console.log("All Quiz Data:", data);
+        // Later, send to backend or validate completeness
     };
 
     //time limit of quiz
@@ -125,86 +148,101 @@ const QuizCreation = () => {
                 </div>
             )}
 
-            {manualCreation && (
-                <>
-                    {/* add questions section */}
-                    <div className='w-full h-auto mt-6 px-4 md:px-6 py-8 bg-white rounded-lg shadow flex flex-col gap-2 md:gap-5'>
+            <FormProvider {...methods}>
+                {manualCreation && (
+                    <>
+                        {/* add questions section */}
+                        <div className='w-full h-auto mt-6 px-4 md:px-6 py-8 bg-white rounded-lg shadow flex flex-col gap-2 md:gap-5'>
 
-                        {/* quiz name */}
-                        <h2 className='text-lg text-zinc-700'>Add Questions</h2>
+                            {/* quiz name */}
+                            <h2 className='text-lg text-zinc-700'>Add Questions</h2>
 
-                        <div className='flex flex-col gap-4 md:flex-row md:justify-between md:items-center'>
+                            <div className='flex flex-col gap-4 md:flex-row md:justify-between md:items-center'>
 
-                            {/* questions type */}
-                            <div className="flex gap-4">
-                                {quizTypes.map(({ type, label, shortLabel }) => (
-                                    <button
-                                        key={type}
-                                        onClick={() => dispatch(addQuiz({ type, timeLimit }))}
-                                        className="cursor-pointer min-w-fit h-fit px-4 py-2 bg-white border border-gray-200 rounded-lg hover:ring-2 hover:ring-violet-400 transition-all duration-200 text-zinc-600 flex gap-2 items-center"
-                                    >
-                                        <span className="hidden md:block">{label}</span>
-                                        <span className="block md:hidden">{shortLabel}</span>
-                                    </button>
-                                ))}
-                            </div>
+                                {/* questions type */}
+                                <div className="flex gap-4">
+                                    {quizTypes.map(({ type, label, shortLabel }) => (
+                                        <button
+                                            key={type}
+                                            onClick={() => dispatch(addQuiz({ type, timeLimit }))}
+                                            className="cursor-pointer min-w-fit h-fit px-4 py-2 bg-white border border-gray-200 rounded-lg hover:ring-2 hover:ring-violet-400 transition-all duration-200 text-zinc-600 flex gap-2 items-center"
+                                        >
+                                            <span className="hidden md:block">{label}</span>
+                                            <span className="block md:hidden">{shortLabel}</span>
+                                        </button>
+                                    ))}
+                                </div>
 
-                            {/* time limit for question */}
-                            <div className='flex items-center gap-3'>
-                                <h2 className='text-xs text-zinc-800 flex gap-1 items-center'>
-                                    <LuTimer className='text-[#8570C0] text-lg' />
-                                    Time Limit (sec)
-                                </h2>
-                                <input
-                                    type="number"
-                                    value={timeLimit}
-                                    onChange={(e) => setTimeLimit(Number(e.target.value))}
-                                    className='w-20 h-10 px-3 border border-gray-200 outline-none rounded-lg hover:ring-2 hover:ring-violet-400 transition-all duration-200' />
+                                {/* time limit for question */}
+                                <div className='flex items-center gap-3'>
+                                    <h2 className='text-xs text-zinc-800 flex gap-1 items-center'>
+                                        <LuTimer className='text-[#8570C0] text-lg' />
+                                        Time Limit (sec)
+                                    </h2>
+                                    <input
+                                        type="number"
+                                        value={timeLimit}
+                                        onChange={(e) => setTimeLimit(Number(e.target.value))}
+                                        className='w-20 h-10 px-3 border border-gray-200 outline-none rounded-lg hover:ring-2 hover:ring-violet-400 transition-all duration-200' />
+                                </div>
+
                             </div>
 
                         </div>
 
-                    </div>
+                        {/* quiz questions count */}
+                        <div className='flex items-center gap-4 mt-6'>
+                            <h2 className='text-lg text-zinc-700 font-semibold'>
+                                Quiz Questions
+                            </h2>
 
-                    {/* quiz questions count */}
-                    <div className='flex items-center gap-4 mt-6'>
-                        <h2 className='text-lg text-zinc-700 font-semibold'>
-                            Quiz Questions
-                        </h2>
+                            {/* questions count */}
+                            <h4 className='h-6 w-6 text-violet-500 bg-violet-100 rounded-full text-center'>
+                                {quizzes.length}
+                            </h4>
+                        </div>
 
-                        {/* questions count */}
-                        <h4 className='h-6 w-6 text-violet-500 bg-violet-100 rounded-full text-center'>
-                            {quizzes.length}
-                        </h4>
-                    </div>
-
-                    {/* Render All Added Quizzes */}
-                    <div>
-                        {quizzes.map((quiz, index) => (
-                            <div key={quiz.id} className="flex flex-col gap-5">
-                                {renderQuiz(quiz, index + 1)}
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* questions type for easily reach */}
-                    {(quizzes.length > 0) && (
-                        <div className="flex gap-4 mt-5">
-                            {quizTypes.map(({ type, label, shortLabel }) => (
-                                <button
-                                    key={type}
-                                    onClick={() => dispatch(addQuiz({ type, timeLimit }))}
-                                    className="cursor-pointer min-w-fit h-fit px-4 py-2 bg-white border border-gray-200 rounded-lg hover:ring-2 hover:ring-violet-400 transition-all duration-200 text-zinc-600 flex gap-2 items-center"
-                                >
-                                    <span className="hidden md:block">{label}</span>
-                                    <span className="block md:hidden">{shortLabel}</span>
-                                </button>
+                        {/* Render All Added Quizzes */}
+                        <div>
+                            {quizzes.map((quiz, index) => (
+                                <div key={quiz.id} className="flex flex-col gap-5">
+                                    {renderQuiz(quiz, index + 1)}
+                                </div>
                             ))}
                         </div>
-                    )}
 
-                </>
-            )}
+                        {/* questions type for easily reach */}
+                        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 mt-4">
+                            {(quizzes.length > 0) && (
+                                <div className="flex gap-4 mt-5">
+                                    {quizTypes.map(({ type, label, shortLabel }) => (
+                                        <button
+                                            key={type}
+                                            onClick={() => dispatch(addQuiz({ type, timeLimit }))}
+                                            className="cursor-pointer min-w-fit h-fit px-4 py-2 bg-white border border-gray-200 rounded-lg hover:ring-2 hover:ring-violet-400 transition-all duration-200 text-zinc-600 flex gap-2 items-center"
+                                        >
+                                            <span className="hidden md:block">{label}</span>
+                                            <span className="block md:hidden">{shortLabel}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Submit All Quizzes */}
+                            {quizzes.length > 0 && (
+                                <button
+                                    type="submit"
+                                    className="mt-6 self-start bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 transition-all"
+                                >
+                                    Save & Continue
+                                </button>
+                            )}
+
+                        </form>
+
+                    </>
+                )}
+            </FormProvider>
 
         </section>
     )

@@ -13,10 +13,11 @@ const quizSlice = createSlice({
       },
       prepare: ({ type, timeLimit }) => ({
         payload: {
-          id: nanoid(),        // Unique quiz ID
-          type,                // Quiz type: 'mcq', 'truefalse', 'fillblank'
-          timeLimit,           // Shared time limit (e.g. 20 sec)
-          data: {},            // Placeholder for quiz data
+          id: nanoid(), // Unique quiz ID
+          type, // Quiz type: 'mcq', 'truefalse', 'fillblank'
+          timeLimit, // Shared time limit (e.g. 20 sec)
+          data: {}, // Placeholder for quiz data
+          isComplete: false,
         },
       }),
     },
@@ -30,6 +31,14 @@ const quizSlice = createSlice({
       }
     },
 
+    setQuizCompleteStatus: (state, action) => {
+      const { id, isComplete } = action.payload;
+      const quiz = state.items.find((q) => q.id === id);
+      if (quiz) {
+        quiz.isComplete = isComplete;
+      }
+    },
+
     // Remove quiz by ID
     removeQuiz: (state, action) => {
       state.items = state.items.filter((q) => q.id !== action.payload);
@@ -37,5 +46,5 @@ const quizSlice = createSlice({
   },
 });
 
-export const { addQuiz, updateQuiz, removeQuiz } = quizSlice.actions;
+export const { addQuiz, updateQuiz, removeQuiz, setQuizCompleteStatus } = quizSlice.actions;
 export default quizSlice.reducer;

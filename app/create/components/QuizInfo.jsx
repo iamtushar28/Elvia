@@ -13,6 +13,13 @@ const QuizInfo = () => {
     // Calculate total time in seconds for all quizzes
     const totalSeconds = quizzes.reduce((sum, quiz) => sum + (quiz.timeLimit || 0), 0);
 
+
+    const total = quizzes.length;
+    const complete = quizzes.filter(q => q.isComplete).length;
+    const incomplete = total - complete;
+
+
+
     // Format the total time into a readable string (e.g., "1 min 30 sec")
     const formatTime = (totalSeconds) => {
         const minutes = Math.floor(totalSeconds / 60); // Get full minutes
@@ -44,13 +51,23 @@ const QuizInfo = () => {
                         {/* question count */}
                         <h4 className='text-zinc-800 font-[500] text-lg flex items-center gap-2'>
                             <LuListChecks className='text-xl text-[#8570C0]' />
-                            Questions: {quizzes.length}
+                            Questions: {total}
                         </h4>
 
                         {/* incomplete quiz status count */}
-                        <button className='px-2 md:px-3 py-1 text-xs md:text-sm text-red-500 bg-red-50 rounded-2xl'>
-                            1 Incomplete
-                        </button>
+                        {total > 0 && incomplete > 0 && (
+                            <button className='px-2 md:px-3 py-1 text-xs md:text-sm text-red-500 bg-red-50 rounded-2xl'>
+                                {incomplete} incomplete
+                            </button>
+                        )}
+
+                        {total > 0 && incomplete === 0 && (
+                            <button className='px-2 md:px-3 py-1 text-xs md:text-sm text-green-600 bg-green-50 rounded-2xl'>
+                                Completed
+                            </button>
+                        )}
+
+
                     </div>
 
                     {/* total estimate time to complete quiz game */}

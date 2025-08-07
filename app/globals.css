@@ -15,7 +15,7 @@ body {
 .blob {
   position: absolute;
   opacity: 0.5;
-  animation: float 20s ease-in-out infinite, rotate 60s linear infinite;
+  animation: float 5s ease-in-out infinite, rotate 10s linear infinite;
   transform-origin: center;
   border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%; /* makes it look blobby */
 }
