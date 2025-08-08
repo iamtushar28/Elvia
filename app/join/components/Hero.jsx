@@ -1,9 +1,8 @@
 import React from 'react'
-import Image from 'next/image'
-import Avatar from '@/public/avatar.png'
 import { FaArrowLeft } from "react-icons/fa";
 import AnimatedBackground from '@/app/components/AnimatedBackground';
 import Link from 'next/link';
+import AvatarSelector from './AvatarSelector';
 
 const Hero = () => {
     return (
@@ -28,15 +27,8 @@ const Hero = () => {
                 Room: 4TKLHP
             </button>
 
-            {/* avatar */}
-            <div className='h-28 w-28 border-3 border-[#917EC6]/50 bg-white rounded-full shadow-lg flex justify-center items-center'>
-                <Image src={Avatar} alt='Avatar' className='h-28 w-28' />
-            </div>
-
-            {/* change avatar */}
-            <button className='px-4 py-2 text-sm text-[#917EC9] bg-white hover:bg-violet-50 rounded-lg border border-[#917EC9] cursor-pointer transition-all duration-200'>
-                Change Avatar
-            </button>
+            {/* select avatar component */}
+            <AvatarSelector />
 
             {/* name of player */}
             <div className='w-full flex justify-center'>

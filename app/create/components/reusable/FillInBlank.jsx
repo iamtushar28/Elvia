@@ -1,38 +1,23 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { updateQuiz, setQuizCompleteStatus } from '@/app/reduxStore/quizSlice';
+import React from 'react'; 
+import { useWatch } from 'react-hook-form';
 
 import { LuTimer } from "react-icons/lu";
 import { RiDeleteBinLine, RiQuestionLine, RiCheckboxCircleLine } from "react-icons/ri";
 
-const FillInBlank = ({ quizId, number, timeLimit, onDelete }) => {
-    const dispatch = useDispatch();
 
-    const [question, setQuestion] = useState('');
-    const [correctAnswer, setCorrectAnswer] = useState('');
-    const [isComplete, setIsComplete] = useState(false);
+const FillInBlank = ({ index, number, timeLimit, onDelete, control, register }) => {
+  
 
-    // Sync Redux state
-    useEffect(() => {
-        const complete = question.trim() !== '' && correctAnswer.trim() !== '';
-        setIsComplete(complete);
+    // Use useWatch to get the current values of this specific question in the form array
+    // The name should be 'questions.INDEX' to match the useFieldArray structure
+    const values = useWatch({ control, name: `questions.${index}` });
 
-        dispatch(updateQuiz({
-            id: quizId,
-            data: {
-                question,
-                correctAnswer,
-                type: 'fillblank',
-            },
-        }));
-
-        dispatch(setQuizCompleteStatus({
-            id: quizId,
-            isComplete: complete,
-        }));
-    }, [question, correctAnswer]);
+    // Determine completeness based on the watched values
+    const isComplete =
+        values?.questionText?.trim() !== '' &&
+        values?.correctAnswer?.trim() !== '';
 
     return (
         <div className='w-full h-auto pb-8 mt-6 bg-white rounded-lg border border-violet-300 overflow-hidden'>
@@ -79,8 +64,8 @@ const FillInBlank = ({ quizId, number, timeLimit, onDelete }) => {
                 </h2>
                 <input
                     type="text"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
+                    // Register the question text field using the correct name path
+                    {...register(`questions.${index}.questionText`, { required: true })}
                     placeholder='Enter your question'
                     className='w-full h-10 px-3 border border-zinc-200 outline-none rounded-lg placeholder:text-sm placeholder:text-zinc-500 hover:ring-2 hover:ring-violet-300'
                 />
@@ -96,8 +81,8 @@ const FillInBlank = ({ quizId, number, timeLimit, onDelete }) => {
                 <div className='mt-2'>
                     <input
                         type="text"
-                        value={correctAnswer}
-                        onChange={(e) => setCorrectAnswer(e.target.value)}
+                        // Register the correct answer field using the correct name path
+                        {...register(`questions.${index}.correctAnswer`, { required: true })}
                         placeholder='Enter the correct answer'
                         className='w-full h-10 px-3 border border-zinc-200 outline-none rounded-lg placeholder:text-sm placeholder:text-zinc-500 hover:ring-2 hover:ring-violet-300'
                     />

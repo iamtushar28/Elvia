@@ -1,37 +1,21 @@
-'use client'
-import React from 'react'
-import { useSelector } from 'react-redux';
+'use client';
+
+import React from 'react';
+// No need for useFormContext or useWatch here anymore
 import { LuListChecks } from "react-icons/lu";
 import { LuTimer } from "react-icons/lu";
 import { FiUsers } from "react-icons/fi";
 
-const QuizInfo = () => {
-
-    // Access all quiz items from Redux store
-    const quizzes = useSelector((state) => state.quizzes.items);
-
-    // Calculate total time in seconds for all quizzes
-    const totalSeconds = quizzes.reduce((sum, quiz) => sum + (quiz.timeLimit || 0), 0);
-
-
-    const total = quizzes.length;
-    const complete = quizzes.filter(q => q.isComplete).length;
-    const incomplete = total - complete;
-
-
+// Accept props for quiz information
+const QuizInfo = ({ totalQuestions, completeQuestions, incompleteQuestions, totalEstimateTime }) => {
 
     // Format the total time into a readable string (e.g., "1 min 30 sec")
     const formatTime = (totalSeconds) => {
-        const minutes = Math.floor(totalSeconds / 60); // Get full minutes
-        const seconds = totalSeconds % 60; // Get remaining seconds
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
 
-        // Show only seconds if less than 1 minute
         if (minutes === 0) return `${seconds} sec`;
-
-        // Show only minutes if exact minute (no remaining seconds)
         if (seconds === 0) return `${minutes} min`;
-
-        // Show both minutes and seconds
         return `${minutes} min ${seconds} sec`;
     };
 
@@ -51,29 +35,27 @@ const QuizInfo = () => {
                         {/* question count */}
                         <h4 className='text-zinc-800 font-[500] text-lg flex items-center gap-2'>
                             <LuListChecks className='text-xl text-[#8570C0]' />
-                            Questions: {total}
+                            Questions: {totalQuestions} {/* Use prop */}
                         </h4>
 
                         {/* incomplete quiz status count */}
-                        {total > 0 && incomplete > 0 && (
+                        {totalQuestions > 0 && incompleteQuestions > 0 && (
                             <button className='px-2 md:px-3 py-1 text-xs md:text-sm text-red-500 bg-red-50 rounded-2xl'>
-                                {incomplete} incomplete
+                                {incompleteQuestions} incomplete {/* Use prop */}
                             </button>
                         )}
 
-                        {total > 0 && incomplete === 0 && (
+                        {totalQuestions > 0 && (
                             <button className='px-2 md:px-3 py-1 text-xs md:text-sm text-green-600 bg-green-50 rounded-2xl'>
-                                Completed
+                              {completeQuestions}  completed
                             </button>
                         )}
-
-
                     </div>
 
                     {/* total estimate time to complete quiz game */}
                     <h4 className='text-zinc-800 text-xs md:text-base flex gap-1 md:gap-2 items-center'>
                         <LuTimer className='text-xl text-[#8570C0]' />
-                        Est. time: {formatTime(totalSeconds)}
+                        Est. time: {formatTime(totalEstimateTime)} {/* Use prop */}
                     </h4>
                 </div>
 
@@ -86,7 +68,7 @@ const QuizInfo = () => {
             </div>
 
         </section>
-    )
-}
+    );
+};
 
-export default QuizInfo
+export default QuizInfo;

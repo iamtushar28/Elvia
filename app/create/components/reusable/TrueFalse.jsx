@@ -1,38 +1,28 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { updateQuiz, setQuizCompleteStatus } from '@/app/reduxStore/quizSlice';
+import React from 'react';
+import { useWatch } from 'react-hook-form';
 
 import { LuTimer } from "react-icons/lu";
 import { RiDeleteBinLine, RiQuestionLine, RiCheckboxCircleLine } from "react-icons/ri";
 
-const TrueFalse = ({ quizId, number, timeLimit, onDelete }) => {
-    const dispatch = useDispatch();
+const TrueFalse = ({ index, number, timeLimit, onDelete, control, register, setValue }) => {
 
-    const [question, setQuestion] = useState('');
-    const [selectedAnswer, setSelectedAnswer] = useState(null); // true / false
-    const [isComplete, setIsComplete] = useState(false);
+    // Use useWatch to get the current values of this specific question in the form array
+    // The name should be 'questions.INDEX' to match the useFieldArray structure
+    const values = useWatch({ control, name: `questions.${index}` });
 
-    // Update Redux when values change
-    useEffect(() => {
-        const complete = question.trim() !== '' && selectedAnswer !== null;
-        setIsComplete(complete);
+    // Determine completeness based on the watched values
+    // 'correctAnswer' will be a boolean (true or false) for True/False questions
+    const isComplete =
+        values?.questionText?.trim() !== '' &&
+        (values?.correctAnswer === true || values?.correctAnswer === false); // Check if a boolean value is set
 
-        dispatch(updateQuiz({
-            id: quizId,
-            data: {
-                question,
-                correctAnswer: selectedAnswer,
-                type: 'truefalse',
-            },
-        }));
 
-        dispatch(setQuizCompleteStatus({
-            id: quizId,
-            isComplete: complete,
-        }));
-    }, [question, selectedAnswer]);
+    const handleSelectAnswer = (answer) => {
+        // Use setValue to update the 'correctAnswer' field for this specific question
+        setValue(`questions.${index}.correctAnswer`, answer, { shouldValidate: true });
+    };
 
     return (
         <div className='w-full h-auto pb-8 mt-6 bg-white rounded-lg border border-violet-300 overflow-hidden'>
@@ -80,8 +70,8 @@ const TrueFalse = ({ quizId, number, timeLimit, onDelete }) => {
 
                 <input
                     type="text"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
+                    // Register the question text field using the correct name path
+                    {...register(`questions.${index}.questionText`, { required: true })}
                     placeholder='Enter your question'
                     className='w-full h-10 px-3 border border-zinc-200 outline-none rounded-lg placeholder:text-sm placeholder:text-zinc-500 hover:ring-2 hover:ring-violet-300'
                 />
@@ -99,11 +89,11 @@ const TrueFalse = ({ quizId, number, timeLimit, onDelete }) => {
                     {/* True option */}
                     <button
                         type='button'
-                        onClick={() => setSelectedAnswer(true)}
+                        onClick={() => handleSelectAnswer(true)}
                         className='flex gap-3 items-center group cursor-pointer'
                     >
                         <div className='min-h-5 min-w-5 border border-zinc-300 bg-white rounded-full cursor-pointer flex justify-center items-center'>
-                            <div className={`h-3 w-3 rounded-full transition-all duration-200 ${selectedAnswer === true ? 'bg-green-500' : 'group-hover:bg-green-400'
+                            <div className={`h-3 w-3 rounded-full transition-all duration-200 ${values?.correctAnswer === true ? 'bg-green-500' : 'group-hover:bg-green-400'
                                 }`}></div>
                         </div>
                         <h4 className='h-10 w-full px-4 bg-gray-50 text-start flex items-center rounded'>True</h4>
@@ -112,11 +102,11 @@ const TrueFalse = ({ quizId, number, timeLimit, onDelete }) => {
                     {/* False option */}
                     <button
                         type='button'
-                        onClick={() => setSelectedAnswer(false)}
+                        onClick={() => handleSelectAnswer(false)}
                         className='flex gap-3 items-center group cursor-pointer'
                     >
                         <div className='min-h-5 min-w-5 border border-zinc-300 bg-white rounded-full cursor-pointer flex justify-center items-center'>
-                            <div className={`h-3 w-3 rounded-full transition-all duration-200 ${selectedAnswer === false ? 'bg-green-500' : 'group-hover:bg-green-400'
+                            <div className={`h-3 w-3 rounded-full transition-all duration-200 ${values?.correctAnswer === false ? 'bg-green-500' : 'group-hover:bg-green-400'
                                 }`}></div>
                         </div>
                         <h4 className='h-10 w-full px-4 bg-gray-50 text-start flex items-center rounded'>False</h4>
