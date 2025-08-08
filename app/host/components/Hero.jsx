@@ -1,12 +1,33 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { FiUsers, FiPlay } from "react-icons/fi";
 import { LuCopy } from "react-icons/lu";
 import Link from 'next/link';
 import AnimatedBackground from '../../components/AnimatedBackground';
 import MusicPlayer from './MusicPlayer';
 
-const Hero = () => {
+const Hero = ({ roomId }) => {
+
+    const [copiedStatus, setCopiedStatus] = useState(false); // New state for copied indicator
+
+    const handleCopyRoomId = () => {
+        if (roomId) {
+            // Create a temporary textarea element to copy text
+            const el = document.createElement('textarea');
+            el.value = roomId;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy'); // Execute copy command
+            document.body.removeChild(el); // Remove temporary element
+
+            // Set copied status to true and reset after 4 seconds
+            setCopiedStatus(true);
+            setTimeout(() => {
+                setCopiedStatus(false);
+            }, 4000); // Display "Copied!" for 4 seconds
+        }
+    };
+
     return (
         <section className='w-full h-auto min-h-[100vh] flex gap-3 flex-col justify-center items-center relative'>
 
@@ -21,9 +42,17 @@ const Hero = () => {
                 </div>
 
                 {/* game pin */}
-                <button className='md:hidden text-sm w-fit px-4 py-2 text-[#8570C0] bg-white rounded-3xl shadow flex items-center gap-2 cursor-pointer'>
-                    Game PIN : 0FQBGY
-                    <LuCopy className='' />
+                <button
+                    onClick={handleCopyRoomId}
+                    className='md:hidden text-sm w-fit px-4 py-2 text-[#8570C0] bg-white rounded-3xl shadow flex items-center gap-2 cursor-pointer'>
+                    {copiedStatus ? (
+                        <span>Copied!</span> // Show "Copied!" text
+                    ) : (
+                        <>
+                            Game PIN : {roomId ? roomId : 'Loading...'}
+                            <LuCopy className='text-lg' />
+                        </>
+                    )}
                 </button>
 
             </div>

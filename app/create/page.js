@@ -2,10 +2,19 @@
 
 import React from "react";
 import { useForm, FormProvider, useWatch } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+
+// Firebase Imports
+import { db, auth } from '../firebase/firebase';
+import { collection, addDoc } from "firebase/firestore"; // Ensure addDoc and collection are imported
 
 import Navbar from "./components/Navbar";
 import QuizInfo from "./components/QuizInfo";
 import QuizCreation from "./components/QuizCreation";
+
+
+// --- Firebase Configuration (Provided by Canvas Environment) ---
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
 const Page = () => {
   const methods = useForm({
@@ -14,23 +23,25 @@ const Page = () => {
     }
   });
 
-  // Watch the 'questions' array to determine overall form completeness and other stats
+  const router = useRouter();
+
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [quizName, setQuizName] = React.useState('Untitled Quiz'); // New: State for quiz name
+
   const questions = useWatch({
     control: methods.control,
     name: 'questions',
     defaultValue: []
   });
 
-  // Calculate all quiz information in one place
   const quizSummary = React.useMemo(() => {
     const total = questions.length;
     let totalSeconds = 0;
     let completeCount = 0;
 
     questions.forEach(q => {
-      totalSeconds += (q.timeLimit || 0); // Sum up time limits
+      totalSeconds += (q.timeLimit || 0);
 
-      // Determine if an individual question is complete
       let isQuestionComplete = false;
       if (q.type === 'mcq') {
         isQuestionComplete = q.questionText?.trim() &&
@@ -49,7 +60,7 @@ const Page = () => {
     });
 
     const incompleteCount = total - completeCount;
-    const isFormComplete = total > 0 && incompleteCount === 0; // Form is complete if there are questions and all are complete
+    const isFormComplete = total > 0 && incompleteCount === 0;
 
     return {
       total,
@@ -58,28 +69,55 @@ const Page = () => {
       totalSeconds,
       isFormComplete
     };
-  }, [questions]); // Recalculate whenever 'questions' array changes
+  }, [questions]);
 
-  // Destructure for easier access
   const { total, complete, incomplete, totalSeconds, isFormComplete } = quizSummary;
 
-  // Define the onSubmit logic here, where handleSubmit is available
-  const onSubmit = (data) => {
-    console.log("All Quiz Data for Submission:", data.questions);
-    alert('Quiz submitted! Check console for data.'); // Using alert for demonstration
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+
+    try {
+      // Use crypto.randomUUID() for creatorId if not using Firebase Auth
+      // If Firebase Auth is needed for security rules, ensure anonymous login happens in firebase.js
+      const userId = auth.currentUser?.uid || crypto.randomUUID();
+
+      const quizzesCollectionRef = collection(db, `artifacts/${appId}/public/data/quizzes`);
+      const generatedRoomId = crypto.randomUUID().slice(0, 8).toUpperCase();
+
+      await addDoc(quizzesCollectionRef, {
+        creatorId: userId,
+        createdAt: new Date(),
+        quizName: quizName, // NEW: Include the quizName from state
+        questions: data.questions,
+        roomId: generatedRoomId,
+      });
+
+      console.log("Quiz saved successfully. Room ID:", generatedRoomId);
+      router.push(`/host?roomId=${generatedRoomId}`);
+
+    } catch (error) {
+      console.error("Error saving quiz:", error);
+      alert("Failed to save quiz. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <>
-      {/* Pass handleSubmit as a prop to Navbar, and also the isFormComplete status */}
-      <Navbar onStartQuiz={methods.handleSubmit(onSubmit)} isStartQuizEnabled={isFormComplete} />
+      <Navbar
+        onStartQuiz={methods.handleSubmit(onSubmit)}
+        isStartQuizEnabled={isFormComplete}
+        isLoading={isLoading}
+      />
       <FormProvider {...methods}>
-        {/* Pass all calculated quiz summary props to QuizInfo */}
         <QuizInfo
           totalQuestions={total}
           completeQuestions={complete}
           incompleteQuestions={incomplete}
           totalEstimateTime={totalSeconds}
+          quizName={quizName}         // Pass quizName to QuizInfo
+          setQuizName={setQuizName}   // Pass setQuizName to QuizInfo for editing
         />
         <QuizCreation />
       </FormProvider>

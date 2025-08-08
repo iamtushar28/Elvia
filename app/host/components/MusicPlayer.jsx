@@ -11,7 +11,7 @@ const tracks = [
 const MusicPlayer = () => {
     const audioRef = useRef(null); // Reference to the audio element
     const dropdownRef = useRef(null); // Reference to the dropdown element
-    const [isPlaying, setIsPlaying] = useState(false); // State to track play/pause
+    const [isPlaying, setIsPlaying] = useState(true); // State to track play/pause
     const [isMuted, setIsMuted] = useState(false); // State to track mute/unmute
     const [currentTrack, setCurrentTrack] = useState(tracks[0]); // Currently selected track
     const [dropdownOpen, setDropdownOpen] = useState(false); // Controls dropdown visibility
@@ -99,6 +99,7 @@ const MusicPlayer = () => {
                     ref={audioRef}
                     src={currentTrack.file}
                     loop
+                    autoPlay
                     preload="auto"
                     crossOrigin="anonymous"
                 />
