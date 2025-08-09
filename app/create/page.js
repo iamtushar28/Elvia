@@ -77,8 +77,7 @@ const Page = () => {
     setIsLoading(true);
 
     try {
-      // Use crypto.randomUUID() for creatorId if not using Firebase Auth
-      // If Firebase Auth is needed for security rules, ensure anonymous login happens in firebase.js
+      // Use crypto.randomUUID() for creatorId
       const userId = auth.currentUser?.uid || crypto.randomUUID();
 
       const quizzesCollectionRef = collection(db, `artifacts/${appId}/public/data/quizzes`);

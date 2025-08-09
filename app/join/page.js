@@ -1,15 +1,14 @@
 "use client";
-
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import Navbar from "./components/Navbar";
+
 import Hero from "./components/Hero";
 import DefaultError from "../components/DefaultError";
 
 // This is a separate component that uses the search params for the Suspense boundary to work correctly.
-const RoomComponent = () => {
+const RoomManager = () => {
   const searchParams = useSearchParams();
-  const [roomId, setRoomId] = useState(null); ///set roomId null
+  const [roomId, setRoomId] = useState(null); //set roomId null
 
   useEffect(() => {
     const id = searchParams.get("roomId"); //getting roomId from url
@@ -18,34 +17,27 @@ const RoomComponent = () => {
     }
   }, [searchParams]);
 
-  // Conditional rendering to show the fallback component when quiz Id not provided
+  // Conditional rendering to show the fallback component when room Id is not provided
   if (!roomId) {
     return (
       <DefaultError
         errorMessage={
-          "No room ID provided. Please create a new quiz or Join a new quiz."
+          "No room ID provided. Please try again to join or create a new quiz."
         }
       />
     );
   }
 
-  return (
-    <>
-      <Navbar roomId={roomId} />
-      <Hero roomId={roomId} />
-    </>
-  );
+  return <Hero roomId={roomId} />;
 };
 
-// This is your main page component
+// The main page component that uses Suspense
 const Page = () => {
   return (
-    <>
-      {/* Wrap the component that uses useSearchParams in a Suspense boundary */}
-      <Suspense fallback={<div>Loading...</div>}>
-        <RoomComponent />
-      </Suspense>
-    </>
+    // The `fallback` prop will display something while waiting for the client to render.
+    <Suspense fallback={<div>Loading room...</div>}>
+      <RoomManager />
+    </Suspense>
   );
 };
 
