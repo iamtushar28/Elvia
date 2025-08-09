@@ -1,20 +1,21 @@
 'use client'
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 
-const page = () => {
-  const searchParams = useSearchParams(); // Get URL search parameters
+// This is a separate component that uses the search params
+const RoomComponent = () => {
+  const searchParams = useSearchParams();
   const [roomId, setRoomId] = useState(null);
 
   useEffect(() => {
-    // Read the roomId from the URL query parameter
     const id = searchParams.get("roomId");
     if (id) {
       setRoomId(id);
     }
-  }, [searchParams]); // Re-run effect if searchParams change
+  }, [searchParams]);
 
   return (
     <>
@@ -24,4 +25,16 @@ const page = () => {
   );
 };
 
-export default page;
+// This is your main page component
+const Page = () => {
+  return (
+    <>
+      {/* Wrap the component that uses useSearchParams in a Suspense boundary */}
+      <Suspense fallback={<div>Loading...</div>}>
+        <RoomComponent />
+      </Suspense>
+    </>
+  );
+};
+
+export default Page;
