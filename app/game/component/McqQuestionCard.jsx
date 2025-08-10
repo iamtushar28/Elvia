@@ -17,7 +17,7 @@ const McqQuestionCard = () => {
                 <button className='w-full h-14 md:h-16 px-4 border-2 border-zinc-200 hover:bg-violet-50 hover:border-violet-400 rounded-lg flex justify-start items-center gap-4 cursor-pointer transition-all duration-300'>
 
                     <div className='h-8 w-8 text-violet-400 bg-violet-100 rounded-full flex justify-center items-center'>
-                        a
+                        A
                     </div>
 
                     abc
@@ -28,7 +28,7 @@ const McqQuestionCard = () => {
                 <button className='w-full h-14 md:h-16 px-4 border-2 border-zinc-200 hover:bg-violet-50 hover:border-violet-400 rounded-lg flex justify-start items-center gap-4 cursor-pointer transition-all duration-300'>
 
                     <div className='h-8 w-8 text-violet-400 bg-violet-100 rounded-full flex justify-center items-center'>
-                        b
+                        B
                     </div>
 
                     abc
@@ -38,7 +38,7 @@ const McqQuestionCard = () => {
                 <button className='w-full h-14 md:h-16 px-4 border-2 border-zinc-200 hover:bg-violet-50 hover:border-violet-400 rounded-lg flex justify-start items-center gap-4 cursor-pointer transition-all duration-300'>
 
                     <div className='h-8 w-8 text-violet-400 bg-violet-100 rounded-full flex justify-center items-center'>
-                        c
+                        C
                     </div>
 
                     abc
@@ -49,7 +49,7 @@ const McqQuestionCard = () => {
                 <button className='w-full h-14 md:h-16 px-4 border-2 border-zinc-200 hover:bg-violet-50 hover:border-violet-400 rounded-lg flex justify-start items-center gap-4 cursor-pointer transition-all duration-300'>
 
                     <div className='h-8 w-8 text-violet-400 bg-violet-100 rounded-full flex justify-center items-center'>
-                        d
+                        D
                     </div>
 
                     abc

@@ -1,37 +1,36 @@
-'use client';
+"use client";
 
 import React from "react";
-import { useForm, FormProvider, useWatch } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import { useForm, FormProvider, useWatch } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 // Firebase Imports
-import { db, auth } from '../firebase/firebase';
-import { collection, addDoc } from "firebase/firestore"; // Ensure addDoc and collection are imported
+import { db, auth } from "../firebase/firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 import Navbar from "./components/Navbar";
 import QuizInfo from "./components/QuizInfo";
 import QuizCreation from "./components/QuizCreation";
 
-
 // --- Firebase Configuration (Provided by Canvas Environment) ---
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
 
 const Page = () => {
   const methods = useForm({
     defaultValues: {
-      questions: []
-    }
+      questions: [],
+    },
   });
 
   const router = useRouter();
 
   const [isLoading, setIsLoading] = React.useState(false);
-  const [quizName, setQuizName] = React.useState('Untitled Quiz'); // New: State for quiz name
+  const [quizName, setQuizName] = React.useState("Untitled Quiz");
 
   const questions = useWatch({
     control: methods.control,
-    name: 'questions',
-    defaultValue: []
+    name: "questions",
+    defaultValue: [],
   });
 
   const quizSummary = React.useMemo(() => {
@@ -39,18 +38,21 @@ const Page = () => {
     let totalSeconds = 0;
     let completeCount = 0;
 
-    questions.forEach(q => {
-      totalSeconds += (q.timeLimit || 0);
+    questions.forEach((q) => {
+      totalSeconds += q.timeLimit || 0;
 
       let isQuestionComplete = false;
-      if (q.type === 'mcq') {
-        isQuestionComplete = q.questionText?.trim() &&
-                             q.options?.every(opt => opt.optionText?.trim()) &&
-                             (q.correctOptionIndex !== null && q.correctOptionIndex !== undefined);
-      } else if (q.type === 'truefalse') {
-        isQuestionComplete = q.questionText?.trim() &&
-                             (q.correctAnswer === true || q.correctAnswer === false);
-      } else if (q.type === 'fillblank') {
+      if (q.type === "mcq") {
+        isQuestionComplete =
+          q.questionText?.trim() &&
+          q.options?.every((opt) => opt.optionText?.trim()) &&
+          q.correctOptionIndex !== null &&
+          q.correctOptionIndex !== undefined;
+      } else if (q.type === "truefalse") {
+        isQuestionComplete =
+          q.questionText?.trim() &&
+          (q.correctAnswer === true || q.correctAnswer === false);
+      } else if (q.type === "fillblank") {
         isQuestionComplete = q.questionText?.trim() && q.correctAnswer?.trim();
       }
 
@@ -67,33 +69,39 @@ const Page = () => {
       complete: completeCount,
       incomplete: incompleteCount,
       totalSeconds,
-      isFormComplete
+      isFormComplete,
     };
   }, [questions]);
 
-  const { total, complete, incomplete, totalSeconds, isFormComplete } = quizSummary;
+  const { total, complete, incomplete, totalSeconds, isFormComplete } =
+    quizSummary;
 
   const onSubmit = async (data) => {
     setIsLoading(true);
 
     try {
-      // Use crypto.randomUUID() for creatorId
       const userId = auth.currentUser?.uid || crypto.randomUUID();
 
-      const quizzesCollectionRef = collection(db, `artifacts/${appId}/public/data/quizzes`);
-      const generatedRoomId = crypto.randomUUID().slice(0, 8).toUpperCase();
+      const quizzesCollectionRef = collection(
+        db,
+        `artifacts/${appId}/public/data/quizzes`
+      );
+      const generatedRoomId = crypto.randomUUID().slice(0, 8).toUpperCase(); // Still generate for internal storage
 
-      await addDoc(quizzesCollectionRef, {
+      // Use addDoc to create the document and get its reference (which includes the ID)
+      const newQuizDocRef = await addDoc(quizzesCollectionRef, {
         creatorId: userId,
         createdAt: new Date(),
-        quizName: quizName, // NEW: Include the quizName from state
+        quizName: quizName,
         questions: data.questions,
-        roomId: generatedRoomId,
+        roomId: generatedRoomId, // Store roomId as a field within the document
+        joinedUsers: [],
       });
 
-      console.log("Quiz saved successfully. Room ID:", generatedRoomId);
-      router.push(`/host?roomId=${generatedRoomId}`);
+      const quizDocId = newQuizDocRef.id; // Get the auto-generated Firestore Document ID
 
+      // Redirect to /host page, passing ONLY the Firestore Document ID as _quizId
+      router.push(`/host?_quizId=${quizDocId}`);
     } catch (error) {
       console.error("Error saving quiz:", error);
       alert("Failed to save quiz. Please try again.");
@@ -115,8 +123,8 @@ const Page = () => {
           completeQuestions={complete}
           incompleteQuestions={incomplete}
           totalEstimateTime={totalSeconds}
-          quizName={quizName}         // Pass quizName to QuizInfo
-          setQuizName={setQuizName}   // Pass setQuizName to QuizInfo for editing
+          quizName={quizName}
+          setQuizName={setQuizName}
         />
         <QuizCreation />
       </FormProvider>

@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 
 import Hero from "./components/Hero";
 import DefaultError from "../components/DefaultError";
+import LoadingQuiz from "../components/LoadingQuiz";
 
 // This is a separate component that uses the search params for the Suspense boundary to work correctly.
 const RoomManager = () => {
@@ -35,7 +36,7 @@ const RoomManager = () => {
 const Page = () => {
   return (
     // The `fallback` prop will display something while waiting for the client to render.
-    <Suspense fallback={<div>Loading room...</div>}>
+    <Suspense fallback={<LoadingQuiz />}>
       <RoomManager />
     </Suspense>
   );

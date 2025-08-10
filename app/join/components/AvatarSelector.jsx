@@ -1,4 +1,5 @@
-'use client'
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { IoImageOutline } from "react-icons/io5";
@@ -10,33 +11,22 @@ const getRandomAvatarId = () => {
     return Math.floor(Math.random() * TOTAL_AVATARS) + 1;
 };
 
-const AvatarSelector = () => {
-    const [avatarId, setAvatarId] = useState(1); // Default avatar is set to 1
+// Accept selectedAvatarId and setSelectedAvatarId as props
+const AvatarSelector = ({ selectedAvatarId, setSelectedAvatarId }) => {
     const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
 
-    // This effect runs only once when the component mounts
-    // to set a random avatar on initial load.
-    useEffect(() => {
-        setAvatarId(getRandomAvatarId());
-    }, []);
+    // No useEffect here for initial random avatar as it's handled by CreateProfile
 
     const handleChangeAvatar = () => {
-        // Start the loading state
         setIsLoadingAvatar(true);
         setTimeout(() => {
             let newAvatarId = getRandomAvatarId();
-
-            // Ensure the new avatar is different from the current one
-            while (newAvatarId === avatarId) {
+            while (newAvatarId === selectedAvatarId) { // Use selectedAvatarId from props
                 newAvatarId = getRandomAvatarId();
             }
-
-            // Update the avatar ID after the "loading" is complete
-            setAvatarId(newAvatarId);
-
-            // End the loading state
+            setSelectedAvatarId(newAvatarId); // Update parent's state
             setIsLoadingAvatar(false);
-        }, 500); // 500ms delay to simulate network latency or a brief loading time
+        }, 500);
     };
 
     return (
@@ -44,17 +34,20 @@ const AvatarSelector = () => {
             {/* Avatar Display */}
             <div className='h-32 w-32 border-3 border-[#917EC6]/50 text-[#8570C0E6] bg-white rounded-full shadow-lg flex justify-center items-center overflow-hidden'>
                 {isLoadingAvatar ? (
-                    <div className='flex items-center justify-center h-full w-full text-[2rem] text-[] animate-pulse'>
+                    <div className='flex items-center justify-center h-full w-full text-[2rem] text-[#8570C0E6] animate-pulse'>
                         <IoImageOutline />
                     </div>
                 ) : (
-                    <Image
-                        src={`/avatars/avatar-${avatarId}.webp`}
-                        alt={`User Avatar ${avatarId}`}
-                        width={128}
-                        height={128}
-                        className='object-cover h-full w-full'
-                    />
+                    // Use selectedAvatarId from props for the image src
+                    selectedAvatarId && ( // Render only if avatarId is set
+                        <Image
+                            src={`/avatars/avatar-${selectedAvatarId}.webp`}
+                            alt={`User Avatar ${selectedAvatarId}`}
+                            width={128}
+                            height={128}
+                            className='object-cover h-full w-full'
+                        />
+                    )
                 )}
             </div>
 

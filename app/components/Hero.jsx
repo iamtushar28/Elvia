@@ -28,7 +28,7 @@ const Hero = () => {
 
                 <div className='bg-pink-100'></div>
 
-                <h6 className='text-zinc-500'>Or</h6>
+                <h6 className='text-zinc-500 -mt-3'>Or</h6>
 
                 {/* Create new quiz room button */}
                 <Link href={'/create'} className='w-full py-2 text-[#8570C0] border border-[#8570C0] hover:bg-violet-50 rounded-lg cursor-pointer transition-all duration-300 text-center'>

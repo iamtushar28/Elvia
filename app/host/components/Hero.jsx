@@ -1,30 +1,89 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FiUsers, FiPlay } from "react-icons/fi";
 import { LuCopy } from "react-icons/lu";
 import Link from 'next/link';
 import AnimatedBackground from '../../components/AnimatedBackground';
 import MusicPlayer from './MusicPlayer';
+import Image from 'next/image';
+import JoinedUserCard from './JoinedUserCard';
 
-const Hero = ({ roomId }) => {
+const Hero = ({ roomId, joinedUsers }) => {
+    const [copiedStatus, setCopiedStatus] = useState(false);
+    const [positionedUsers, setPositionedUsers] = useState([]);
 
-    const [copiedStatus, setCopiedStatus] = useState(false); // New state for copied indicator
+    // Minimum distance to prevent overlaps
+    const MIN_DISTANCE = 150;
+
+    // This function checks if a new position is too close to existing users
+    const checkOverlap = (newPos, existingUsers) => {
+        for (let user of existingUsers) {
+            if (user.position) {
+                const dx = newPos.left - user.position.left;
+                const dy = newPos.top - user.position.top;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < MIN_DISTANCE) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    // Define the getRandomPositionInBoundary function here
+    const getRandomPositionInBoundary = () => {
+        const minTop = 14;
+        const maxTop = 78;
+        const minLeft = 4;
+        const maxLeft = 96;
+
+        const randomTop = Math.random() * (maxTop - minTop) + minTop;
+        const randomLeft = Math.random() * (maxLeft - minLeft) + minLeft;
+
+        return {
+            top: `${randomTop}%`,
+            left: `${randomLeft}%`,
+        };
+    };
+
+    // This effect runs whenever a new user joins
+    useEffect(() => {
+        if (joinedUsers.length > 0) {
+            const lastUser = joinedUsers[joinedUsers.length - 1];
+            // If the user's position hasn't been calculated yet, do it now
+            if (!positionedUsers.find(user => user.userId === lastUser.userId)) {
+                let newPosition;
+                let overlap = true;
+
+                // Loop to find a valid, non-overlapping position
+                while (overlap) {
+                    // Generate random positions within the defined boundary
+                    newPosition = getRandomPositionInBoundary();
+                    overlap = checkOverlap(newPosition, positionedUsers);
+                }
+
+                // Add the new user with their calculated position to the state
+                setPositionedUsers(prevUsers => [
+                    ...prevUsers,
+                    { ...lastUser, position: newPosition }
+                ]);
+            }
+        }
+    }, [joinedUsers, positionedUsers]);
 
     const handleCopyRoomId = () => {
         if (roomId) {
-            // Create a temporary textarea element to copy text
             const el = document.createElement('textarea');
             el.value = roomId;
             document.body.appendChild(el);
             el.select();
-            document.execCommand('copy'); // Execute copy command
-            document.body.removeChild(el); // Remove temporary element
+            document.execCommand('copy');
+            document.body.removeChild(el);
 
-            // Set copied status to true and reset after 4 seconds
             setCopiedStatus(true);
             setTimeout(() => {
                 setCopiedStatus(false);
-            }, 4000); // Display "Copied!" for 4 seconds
+            }, 4000);
         }
     };
 
@@ -38,7 +97,7 @@ const Hero = ({ roomId }) => {
             <div className='w-full absolute right-2 md:right-4 top-22 flex flex-col gap-3 items-end'>
 
                 <div className='w-fit px-4 py-1 text-sm md:text-base text-[#8570C0] bg-white rounded-3xl shadow'>
-                    <p>Players: 2 / 49</p>
+                    <p>Players: {joinedUsers.length} / 49</p>
                 </div>
 
                 {/* game pin */}
@@ -57,11 +116,24 @@ const Hero = ({ roomId }) => {
 
             </div>
 
-            {/* title */}
-            <h2 className='text-xl text-[#8570C0] font-semibold'>Waiting for players to join</h2>
+            {/* Display joined users here */}
+            <div className="mb-8">
+                {joinedUsers.length === 0 ? (
+                    <>
+                        {/* title */}
+                        <h2 className='text-center text-xl text-[#8570C0] font-semibold'>Waiting for players to join</h2>
 
-            {/* description */}
-            <p className='text-center text-zinc-600 w-full md:w-[400px] px-3 md:px-0'>Share the game PIN with your players so they can join the quiz.</p>
+                        {/* description */}
+                        <p className='text-center text-zinc-600 w-full md:w-[400px] px-3 md:px-0'>Share the game PIN with your players so they can join the quiz.</p>
+                    </>
+                ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {positionedUsers.map(user => (
+                            <JoinedUserCard key={user.userId} user={user} position={user.position} />
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {/* dog animation image */}
             <iframe
@@ -78,7 +150,7 @@ const Hero = ({ roomId }) => {
                     {/* players count */}
                     <div className='text-zinc-500 flex gap-2 items-center'>
                         <FiUsers className='text-lg text-[#8570C0]' />
-                        <span className='text-lg text-[#8570C0] font-semibold'>0</span>
+                        <span className='text-lg text-[#8570C0] font-semibold'>{joinedUsers.length}</span>
                         <span className='hidden md:block'>Players</span>
                     </div>
 

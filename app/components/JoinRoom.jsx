@@ -4,8 +4,9 @@ import { useRouter } from 'next/navigation'; // For redirection
 
 import { db, auth } from '../firebase/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore'; // For Firestore queries
+import { RiLoader2Fill } from "react-icons/ri"; //loading icon
 
-// If you still need appId for collection paths, ensure it's provided globally by Canvas
+// appId for collection paths
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
 const JoinRoom = () => {
@@ -75,8 +76,13 @@ const JoinRoom = () => {
                 {/* join quiz room button */}
                 <button
                     onClick={handleJoinQuiz}
-                    className='px-4 py-2 text-white bg-[#8570C0] hover:bg-[#886fcbda] rounded-lg cursor-pointer transition-all duration-300'>
-                    {isLoading ? 'Joining...' : 'Join'}
+                    disabled={isLoading}
+                    className={`px-4 py-2 text-white bg-[#8570C0] hover:bg-[#886fcbda] rounded-lg transition-all duration-300 flex items-center gap-1 disabled:cursor-not-allowed cursor-pointer`}>
+                    {isLoading ?
+                        <>Joining...  <RiLoader2Fill className='text-lg animate-spin' /></>
+                        :
+                        <>Join</>
+                    }
                 </button>
             </div>
 

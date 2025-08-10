@@ -3,6 +3,7 @@ import Navbar from "./component/Navbar";
 import QuestionBox from "./component/QuestionBox";
 import QuizWarning from "./component/QuizWarning";
 import CountDown from "./component/CountDown";
+import WaitingScreen from "./component/WaitingScreen";
 
 const page = () => {
   return (
@@ -11,6 +12,7 @@ const page = () => {
       <QuestionBox/>
       {/* <QuizWarning /> */}
       {/* <CountDown /> */}
+      {/* <WaitingScreen /> */}
     </main>
   );
 };

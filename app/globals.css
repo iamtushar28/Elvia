@@ -19,6 +19,13 @@ body {
   transform-origin: center;
   border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%; /* makes it look blobby */
 }
+.user-bg-blob {
+  background-color: rgb(245, 145, 162);
+  height: 60px;
+  width: 60px;
+  transform-origin: center;
+  border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%; /* makes it look blobby */
+}
 
 /* Soft pastel shades (like Tailwind 100) */
 .pink    { background-color: #fcbee1; }
@@ -39,4 +46,15 @@ body {
 @keyframes rotate {
   0%   { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+@keyframes zoomInAndMove {
+  from {
+    transform: scale(0.5) translate(-50%, -50%);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translate(-50%, -50%);
+    opacity: 1;
+  }
 }
