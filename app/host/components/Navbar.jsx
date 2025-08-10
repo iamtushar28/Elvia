@@ -3,7 +3,7 @@ import { LuCopy } from "react-icons/lu";
 import { IoArrowBackOutline } from "react-icons/io5";
 import Link from 'next/link';
 
-const Navbar = ({ roomId }) => {
+const Navbar = ({ roomId, quizName }) => {
 
     const [copiedStatus, setCopiedStatus] = useState(false); // New state for copied indicator
     const [copiedUrlStatus, setCopiedUrlStatus] = useState(false); // New state for copied indicator

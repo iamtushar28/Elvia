@@ -5,46 +5,50 @@ import { useSearchParams } from "next/navigation";
 
 // Import Firebase instances and Firestore functions
 import { db } from "../firebase/firebase";
-import { doc, onSnapshot, getDoc } from "firebase/firestore"; // Added getDoc for initial fetch
+import { doc, onSnapshot } from "firebase/firestore";
 
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import DefaultError from "../components/DefaultError";
 import LoadingQuiz from "../components/LoadingQuiz";
 
-// Assuming appId is globally available or passed down
 const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
 
-// This is a separate component that uses the search params for the Suspense boundary to work correctly.
 const RoomComponent = () => {
   const searchParams = useSearchParams();
-  const [quizId, setQuizId] = useState(null); // Now primarily using quizId (Firestore Doc ID)
-  const [roomIdFromDb, setRoomIdFromDb] = useState(null); // To store roomId retrieved from DB
+  const [quizId, setQuizId] = useState(null);
+  const [roomIdFromDb, setRoomIdFromDb] = useState(null);
   const [joinedUsers, setJoinedUsers] = useState([]);
   const [quizName, setQuizName] = useState("Loading Quiz...");
+  const [quizStatus, setQuizStatus] = useState("waiting");
+  const [playersFinishedCount, setPlayersFinishedCount] = useState(0);
+  const [questions, setQuestions] = useState([]); // NEW: State to store quiz questions
   const [error, setError] = useState(null);
-  const [isLoadingQuizData, setIsLoadingQuizData] = useState(true); // New loading state for fetching quiz data
+  const [isLoadingQuizData, setIsLoadingQuizData] = useState(true);
 
   useEffect(() => {
-    const qId = searchParams.get("_quizId"); // Get _quizId from URL
+    const qId = searchParams.get("_quizId");
 
     if (qId) {
       setQuizId(qId);
-      setError(null); // Clear previous errors
-      setIsLoadingQuizData(true); // Start loading
+      setError(null);
+      setIsLoadingQuizData(true);
 
       const quizDocRef = doc(db, `artifacts/${appId}/public/data/quizzes`, qId);
 
-      // Set up real-time listener for the quiz document
       const unsubscribe = onSnapshot(
         quizDocRef,
         (docSnap) => {
           if (docSnap.exists()) {
             const quizData = docSnap.data();
-            setRoomIdFromDb(quizData.roomId); // Get roomId from the document data
-            setJoinedUsers(quizData.joinedUsers || []);
+            setRoomIdFromDb(quizData.roomId);
+            setJoinedUsers(Object.values(quizData.joinedUsers || {}));
             setQuizName(quizData.quizName || "Untitled Quiz");
-            setIsLoadingQuizData(false); // Data loaded
+            setQuizStatus(quizData.status || "waiting");
+            setPlayersFinishedCount(quizData.playersFinishedCount || 0);
+            setQuestions(quizData.questions || []); // NEW: Update questions state
+            setIsLoadingQuizData(false);
+            console.log("Real-time quiz data update:", quizData);
           } else {
             setError("Quiz not found or has been deleted.");
             setIsLoadingQuizData(false);
@@ -57,46 +61,45 @@ const RoomComponent = () => {
         }
       );
 
-      // Cleanup function to unsubscribe from the listener when component unmounts
       return () => unsubscribe();
     } else {
-      // If _quizId is not in the URL
       setError("No quiz ID provided. Please create or join a new quiz..");
       setIsLoadingQuizData(false);
     }
-  }, [searchParams]); // Depend only on searchParams as it contains the _quizId
+  }, [searchParams]);
 
-  // Conditional rendering for error or loading states
   if (error) {
     return <DefaultError errorMessage={error} />;
   }
 
-  // Show loading fallback if quizId is not yet available or data is being fetched
   if (!quizId || isLoadingQuizData) {
     return <LoadingQuiz />;
   }
 
-  // Once data is loaded, roomIdFromDb will be available
+  const allPlayersFinished =
+    joinedUsers.length > 0 && playersFinishedCount === joinedUsers.length;
+
   return (
     <>
-      <Navbar roomId={roomIdFromDb} quizName={quizName} />{" "}
-      {/* Pass roomIdFromDb */}
+      <Navbar roomId={roomIdFromDb} quizName={quizName} />
       <Hero
         roomId={roomIdFromDb}
         quizId={quizId}
         joinedUsers={joinedUsers}
         quizName={quizName}
-      />{" "}
-      {/* Pass roomIdFromDb and quizId */}
+        quizStatus={quizStatus}
+        db={db}
+        playersFinishedCount={playersFinishedCount}
+        allPlayersFinished={allPlayersFinished}
+        quizQuestions={questions} // NEW: Pass the full questions array
+      />
     </>
   );
 };
 
-// This is your main page component
 const Page = () => {
   return (
     <>
-      {/* Wrap the component that uses useSearchParams in a Suspense boundary */}
       <Suspense fallback={<LoadingQuiz />}>
         <RoomComponent />
       </Suspense>

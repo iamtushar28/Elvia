@@ -90,7 +90,7 @@ const Mcq = ({ index, number, timeLimit, onDelete, control, register, setValue }
                             <button
                                 type='button'
                                 onClick={() => handleSelectCorrectAnswer(optIdx)}
-                                className='min-h-5 min-w-5 border border-zinc-300 bg-white rounded-full flex justify-center items-center group'
+                                className='min-h-5 min-w-5 border border-zinc-300 bg-white rounded-full flex justify-center items-center group cursor-pointer'
                             >
                                 <div
                                     className={`h-3 w-3 rounded-full transition-all ${

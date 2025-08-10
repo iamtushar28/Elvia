@@ -1,35 +1,40 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter
-import AvatarSelector from './AvatarSelector'; // Ensure this path is correct
-import { db, auth } from '../../firebase/firebase'; // Import db and auth
-import { collection, query, where, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore'; // Firestore functions
-import { RiLoader2Fill } from "react-icons/ri"; //loading icon
+import { useRouter } from 'next/navigation';
+import AvatarSelector from './AvatarSelector';
+import { db, auth } from '../../firebase/firebase';
+import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { RiLoader2Fill } from "react-icons/ri";
 
-// Assuming appId is globally available or passed down
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-const CreateProfile = ({ roomId }) => { // Accept roomId as a prop
+const CreateProfile = ({ roomId }) => {
     const [username, setUsername] = useState('');
-    const [selectedAvatarId, setSelectedAvatarId] = useState(null); // State for selected avatar ID
+    const [selectedAvatarId, setSelectedAvatarId] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const router = useRouter();
 
-    // Effect to set a random avatar on initial load
+    const [currentUserId, setCurrentUserId] = useState(null); // Persistent userId
+
     useEffect(() => {
-        // This logic is now in CreateProfile to manage selectedAvatarId
+        let storedUserId = localStorage.getItem('playerUserId');
+        if (!storedUserId) {
+            storedUserId = crypto.randomUUID();
+            localStorage.setItem('playerUserId', storedUserId);
+        }
+        setCurrentUserId(storedUserId);
+
         const TOTAL_AVATARS = 19;
         const getRandomAvatarId = () => Math.floor(Math.random() * TOTAL_AVATARS) + 1;
         setSelectedAvatarId(getRandomAvatarId());
-    }, []); // Runs once on mount
+    }, []);
 
     const handleJoinQuiz = async () => {
         setError('');
         setIsLoading(true);
 
-        // Validate inputs
         if (!username.trim()) {
             setError('Please enter your name.');
             setIsLoading(false);
@@ -45,9 +50,13 @@ const CreateProfile = ({ roomId }) => { // Accept roomId as a prop
             setIsLoading(false);
             return;
         }
+        if (!currentUserId) {
+            setError('Player ID could not be initialized. Please try refreshing.');
+            setIsLoading(false);
+            return;
+        }
 
         try {
-            // Query Firestore to find the quiz using roomId
             const quizzesRef = collection(db, `artifacts/${appId}/public/data/quizzes`);
             const q = query(quizzesRef, where("roomId", "==", roomId.trim().toUpperCase()));
             const querySnapshot = await getDocs(q);
@@ -59,26 +68,24 @@ const CreateProfile = ({ roomId }) => { // Accept roomId as a prop
             }
 
             const quizDoc = querySnapshot.docs[0];
-            const quizDocId = quizDoc.id; // Firestore Document ID (the _quizId for URL)
+            const quizDocId = quizDoc.id;
 
-
-            const currentUserId = crypto.randomUUID(); // Generate a unique ID for this joining user
-
-            // Prepare player data
             const playerProfile = {
                 userId: currentUserId,
                 name: username.trim(),
-                avatar: `/avatars/avatar-${selectedAvatarId}.webp`, // Store the full avatar path
+                avatar: `/avatars/avatar-${selectedAvatarId}.webp`,
                 joinedAt: new Date(),
             };
 
-            // Update the joinedUsers array in the quiz document
             const quizRef = doc(db, `artifacts/${appId}/public/data/quizzes`, quizDocId);
             await updateDoc(quizRef, {
-                joinedUsers: arrayUnion(playerProfile) // Add the new player to the array
+                [`joinedUsers.${currentUserId}`]: playerProfile
             });
 
-            // Redirect to /game page with roomId and quizId
+            // NEW: Save the playerProfile to localStorage for access on the /game page
+            localStorage.setItem('currentPlayerProfile', JSON.stringify(playerProfile));
+
+            console.log("User joined quiz and profile saved:", playerProfile);
             router.push(`/game?roomId=${roomId.trim().toUpperCase()}&_quizId=${quizDocId}`);
 
         } catch (err) {

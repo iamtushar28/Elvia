@@ -95,7 +95,9 @@ const Page = () => {
         quizName: quizName,
         questions: data.questions,
         roomId: generatedRoomId, // Store roomId as a field within the document
-        joinedUsers: [],
+        joinedUsers: {},
+        status: "waiting", // Initial status for the quiz
+        playersFinishedCount: 0, // Initialize count of players who finished
       });
 
       const quizDocId = newQuizDocRef.id; // Get the auto-generated Firestore Document ID

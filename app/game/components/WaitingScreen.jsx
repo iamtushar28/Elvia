@@ -1,21 +1,21 @@
 import React from 'react'
 import Image from 'next/image'
 
-const WaitingScreen = () => {
+const WaitingScreen = ({roomId, currentPlayerProfile}) => {
     return (
         <section className='min-h-screen h-auto w-full px-3 md:px-22 lg:px-44 py-14 flex flex-col gap-6 justify-center items-center'>
 
             {/* room name */}
             <button className='px-5 py-3 text-[#917EC9] bg-violet-100 rounded-3xl'>
-                Room: 638827b
+                Room: {roomId}
             </button>
 
             <div className='h-32 w-32 border-3 border-[#917EC6]/50 text-[#8570C0E6] bg-white rounded-full shadow-lg flex justify-center items-center overflow-hidden'>
 
                 {/* profile image */}
                 <Image
-                    src={`/avatars/avatar-1.webp`}
-                    alt={`User Avatar`}
+                    src={currentPlayerProfile.avatar}
+                    alt={currentPlayerProfile.name}
                     width={128}
                     height={128}
                     className='object-cover h-full w-full'
@@ -28,7 +28,7 @@ const WaitingScreen = () => {
 
                 <p className='text-[#8570C0E6]'>Your Name</p>
 
-                <h4 className='text-lg font-semibold text-zinc-800'>Tushar</h4>
+                <h4 className='text-lg font-semibold text-zinc-800'>{currentPlayerProfile.name}</h4>
 
             </div>
 

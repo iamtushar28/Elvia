@@ -1,0 +1,98 @@
+'use client';
+
+import React, { useState } from 'react'; // Import useState
+import { FaArrowRight } from "react-icons/fa";
+import { RiLoader2Fill } from "react-icons/ri"; // For loading spinner
+
+// McqQuestionCard now accepts questionData and onAnswerSubmit
+const McqQuestionCard = ({ questionData, onAnswerSubmit }) => {
+    const [selectedOptionIndex, setSelectedOptionIndex] = useState(null); // State for user's selected option
+    const [isSubmitting, setIsSubmitting] = useState(false); // State for button loading
+
+    // Map option indexes to letters for display
+    const optionLetters = ['A', 'B', 'C', 'D'];
+
+    const handleOptionSelect = (index) => {
+        setSelectedOptionIndex(index);
+    };
+
+    const handleNextQuestion = async () => {
+        if (selectedOptionIndex === null) {
+            alert("Please select an answer before proceeding.");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            // Call the onAnswerSubmit function passed from GameRoomManager
+            // Pass the question's unique ID (e.g., its index or a generated ID) and the user's answer
+            // For simplicity, using the question's index in the array as its ID for now.
+            // In a real app, questionData might have a unique 'id' field.
+            await onAnswerSubmit(questionData.id || questionData.questionText, selectedOptionIndex); // Pass selected index
+            setSelectedOptionIndex(null); // Reset selection for next question
+        } catch (error) {
+            console.error("Error handling next question:", error);
+            // Error is already handled by GameRoomManager's onAnswerSubmit
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <div className='w-full h-fit p-4 md:p-10 bg-white border border-zinc-200 rounded-lg flex flex-col gap-6 md:gap-10'>
+
+            {/* question */}
+            <h4 className='md:text-lg font-semibold'>
+                {questionData.questionText}
+            </h4>
+
+            {/* answers */}
+            <div className='flex flex-col gap-4 md:gap-6'>
+                {questionData.options.map((option, index) => (
+                    <button
+                        key={index} // Use index as key for options within a question
+                        onClick={() => handleOptionSelect(index)}
+                        className={`
+                            w-full h-14 md:h-16 px-4 border-2 rounded-lg flex justify-start items-center gap-4 cursor-pointer transition-all duration-300
+                            ${selectedOptionIndex === index ? 'bg-violet-100 border-violet-500' : 'border-zinc-200 hover:bg-violet-50 hover:border-violet-400'}
+                            ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}
+                        `}
+                        disabled={isSubmitting}
+                    >
+                        <div className={`
+                            h-8 w-8 rounded-full flex justify-center items-center
+                            ${selectedOptionIndex === index ? 'bg-violet-500 text-white' : 'text-violet-400 bg-violet-100'}
+                        `}>
+                            {optionLetters[index]}
+                        </div>
+                        {option.optionText}
+                    </button>
+                ))}
+
+                {/* next question button */}
+                <div className='flex justify-end'>
+                    <button
+                        onClick={handleNextQuestion}
+                        disabled={isSubmitting || selectedOptionIndex === null} // Disable if submitting or no option selected
+                        className={`
+                            w-fit px-6 py-2 text-white bg-violet-500 rounded-lg
+                            cursor-pointer transition-all duration-300 flex gap-3 items-center
+                            ${isSubmitting || selectedOptionIndex === null ? 'opacity-50 cursor-not-allowed' : 'hover:bg-violet-600'}
+                        `}
+                    >
+                        {isSubmitting ? (
+                            <RiLoader2Fill className="animate-spin text-xl" />
+                        ) : (
+                            <>
+                                Next
+                                <FaArrowRight />
+                            </>
+                        )}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default McqQuestionCard;
