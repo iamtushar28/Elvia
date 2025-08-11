@@ -111,7 +111,7 @@ const CreateProfile = ({ roomId }) => {
                     placeholder='Enter your name'
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className='h-14 w-full bg-white text-center md:w-80 placeholder:text-zinc-400 px-4 border-2 rounded-lg border-violet-300 hover:border-[#917EC9] outline-none transition-all duration-200'
+                    className='h-14 w-full capitalize bg-white text-center md:w-80 placeholder:text-zinc-400 px-4 border-2 rounded-lg border-violet-300 hover:border-[#917EC9] outline-none transition-all duration-200'
                     disabled={isLoading}
                 />
             </div>

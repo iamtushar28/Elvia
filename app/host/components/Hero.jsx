@@ -257,6 +257,8 @@ const Hero = ({
                 {/* Host Game Controls (Start/Show Results button) */}
                 <div>
                     <HostGameControls
+                        quizId={quizId}
+                        db={db}
                         quizStatus={quizStatus}
                         handleStartQuiz={handleStartQuiz}
                         handleShowResults={handleShowResults}

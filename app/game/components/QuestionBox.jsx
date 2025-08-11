@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react'; // Import useState and useEffect
 import { LuTimer } from "react-icons/lu";
 
 // Import your specific question card components
@@ -8,8 +8,34 @@ import McqQuestionCard from './McqQuestionCard';
 import TrueFalseQuestionCard from './TrueFalseQuestionCard';
 import FillBlankQuestionCard from './FillBlankQuestionCard';
 
-// QuestionBox now accepts the current question object, its number/total, and the submit handler
 const QuestionBox = ({ question, questionNumber, totalQuestions, onAnswerSubmit, currentPlayerProfile }) => {
+    // State for the countdown timer
+    const [timerCount, setTimerCount] = useState(question.timeLimit || 20);
+
+    // Effect to manage the countdown timer
+    useEffect(() => {
+        // Reset timer when question changes
+        setTimerCount(question.timeLimit || 20);
+
+        // Set up the interval for the countdown
+        const timerInterval = setInterval(() => {
+            setTimerCount(prevCount => {
+                if (prevCount <= 1) {
+                    clearInterval(timerInterval); // Stop the timer when it reaches 0
+                    // Automatically submit a null/skipped answer if time runs out
+                    // Pass a unique identifier for the question and null as the answer
+                    onAnswerSubmit(question.id || question.questionText, null);
+                    return 0; // Ensure count is 0
+                }
+                return prevCount - 1;
+            });
+        }, 1000); // Decrement every 1 second
+
+        // Cleanup function to clear the interval when the component unmounts
+        // or when the question changes (effect re-runs)
+        return () => clearInterval(timerInterval);
+    }, [question, onAnswerSubmit]); // Re-run effect when question or onAnswerSubmit changes
+
     if (!question) {
         return (
             <section className='min-h-screen h-auto pt-20 pb-8 px-4 w-full flex justify-center relative'>
@@ -33,7 +59,7 @@ const QuestionBox = ({ question, questionNumber, totalQuestions, onAnswerSubmit,
                     {/* quiz timer */}
                     <h2 className='text-lg md:text-2xl font-semibold flex gap-2 items-center'>
                         <LuTimer className='text-[#8570C0E6]' />
-                        {question.timeLimit || 20} {/* Use timeLimit from the current question, default to 20 */}
+                        {timerCount} {/* Display the functional timer count */}
                     </h2>
                 </div>
 
@@ -41,22 +67,25 @@ const QuestionBox = ({ question, questionNumber, totalQuestions, onAnswerSubmit,
                 {question.type === 'mcq' && (
                     <McqQuestionCard
                         questionData={question}
-                        onAnswerSubmit={onAnswerSubmit} // <--- Pass it down here!
+                        onAnswerSubmit={onAnswerSubmit}
                         currentPlayerProfile={currentPlayerProfile}
+                        isTimerActive={timerCount > 0} // Pass timer status to disable input if needed
                     />
                 )}
                 {question.type === 'truefalse' && (
                     <TrueFalseQuestionCard
                         questionData={question}
-                        onAnswerSubmit={onAnswerSubmit} // <--- Pass it down here!
+                        onAnswerSubmit={onAnswerSubmit}
                         currentPlayerProfile={currentPlayerProfile}
+                        isTimerActive={timerCount > 0} // Pass timer status
                     />
                 )}
                 {question.type === 'fillblank' && (
                     <FillBlankQuestionCard
                         questionData={question}
-                        onAnswerSubmit={onAnswerSubmit} // <--- Pass it down here!
+                        onAnswerSubmit={onAnswerSubmit}
                         currentPlayerProfile={currentPlayerProfile}
+                        isTimerActive={timerCount > 0} // Pass timer status
                     />
                 )}
 

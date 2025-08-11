@@ -53,7 +53,7 @@ const JoinedUserCard = ({ user }) => {
 
             {/* name */}
             <div className='w-fit px-4 py-1 text-sm md:text-base text-[#8570C0] bg-white rounded-3xl shadow'>
-                <p>{user.name}</p>
+                <p className='capitalize'>{user.name}</p>
             </div>
         </div>
     );

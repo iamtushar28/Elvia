@@ -1,12 +1,19 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
+import React, { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 // Firebase Imports
-import { db } from '../firebase/firebase';
-import { doc, onSnapshot, updateDoc, collection, addDoc, increment } from 'firebase/firestore';
+import { db } from "../firebase/firebase";
+import {
+  doc,
+  onSnapshot,
+  updateDoc,
+  collection,
+  addDoc,
+  increment,
+} from "firebase/firestore";
 
 // Import your components
 import Navbar from "./components/Navbar";
@@ -16,17 +23,20 @@ import CountDown from "./components/CountDown";
 import WaitingScreen from "./components/WaitingScreen";
 import DefaultError from "../components/DefaultError";
 import LoadingQuiz from "../components/LoadingQuiz";
+import QuizScoreboard from "./components/QuizScoreboard";
+import Link from "next/link";
 
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
 
+// The main component to manage the game room state and logic
 const GameRoomManager = () => {
   const searchParams = useSearchParams();
-  const router = useRouter();
 
+  // State variables for game management
   const [roomId, setRoomId] = useState(null);
   const [quizId, setQuizId] = useState(null);
-  const [quizStatus, setQuizStatus] = useState('waiting');
-  const [quizName, setQuizName] = useState('Loading Quiz...');
+  const [quizStatus, setQuizStatus] = useState("waiting");
+  const [quizName, setQuizName] = useState("Loading Quiz...");
   const [currentPlayers, setCurrentPlayers] = useState([]);
   const [currentPlayerProfile, setCurrentPlayerProfile] = useState(null);
   const [error, setError] = useState(null);
@@ -35,13 +45,17 @@ const GameRoomManager = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  const [startPhase, setStartPhase] = useState('none');
+  // Manages the different phases of the game start (warning, countdown, questions)
+  const [startPhase, setStartPhase] = useState("none");
 
+  // Hook to initialize state and set up a real-time Firestore listener
   useEffect(() => {
-    const rId = searchParams.get('roomId');
-    const qId = searchParams.get('_quizId');
+    // Get room and quiz IDs from the URL
+    const rId = searchParams.get("roomId");
+    const qId = searchParams.get("_quizId");
 
-    const storedProfile = localStorage.getItem('currentPlayerProfile');
+    // Retrieve player profile from local storage
+    const storedProfile = localStorage.getItem("currentPlayerProfile");
     if (storedProfile) {
       setCurrentPlayerProfile(JSON.parse(storedProfile));
     } else {
@@ -50,6 +64,7 @@ const GameRoomManager = () => {
       return;
     }
 
+    // Handle missing URL parameters
     if (!rId || !qId) {
       setError("Missing room or quiz ID in URL. Please join or create a quiz.");
       setIsLoadingData(false);
@@ -60,115 +75,129 @@ const GameRoomManager = () => {
     setQuizId(qId);
     setError(null);
 
+    // Set up a real-time listener for the quiz document in Firestore
     const quizDocRef = doc(db, `artifacts/${appId}/public/data/quizzes`, qId);
-
-    const unsubscribe = onSnapshot(quizDocRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const quizData = docSnap.data();
-        setQuizName(quizData.quizName || 'Untitled Quiz');
-        setQuizStatus(quizData.status || 'waiting');
-        setCurrentPlayers(Object.values(quizData.joinedUsers || {}));
-        setQuestions(quizData.questions || []);
-        setIsLoadingData(false);
-        console.log("Game page real-time update:", quizData);
-      } else {
-        console.log("Quiz document does not exist for ID:", qId);
-        setError("This quiz no longer exists or has been deleted.");
+    const unsubscribe = onSnapshot(
+      quizDocRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const quizData = docSnap.data();
+          setQuizName(quizData.quizName || "Untitled Quiz");
+          setQuizStatus(quizData.status || "waiting");
+          setCurrentPlayers(Object.values(quizData.joinedUsers || {}));
+          setQuestions(quizData.questions || []);
+          setIsLoadingData(false);
+        } else {
+          setError("This quiz no longer exists or has been deleted.");
+          setIsLoadingData(false);
+        }
+      },
+      (err) => {
+        setError("Failed to load quiz data in real-time.");
         setIsLoadingData(false);
       }
-    }, (err) => {
-      console.error("Error listening to quiz document:", err);
-      setError("Failed to load quiz data in real-time.");
-      setIsLoadingData(false);
-    });
+    );
 
+    // Clean up the listener when the component unmounts
     return () => unsubscribe();
   }, [searchParams]);
 
+  // Effect to manage the game's start sequence
   useEffect(() => {
     let warningTimer;
     let countdownTimer;
 
-    if (quizStatus === 'started') {
-      setStartPhase('warning');
+    if (quizStatus === "started") {
+      setStartPhase("warning");
 
       warningTimer = setTimeout(() => {
-        setStartPhase('countdown');
+        setStartPhase("countdown");
       }, 3000);
 
       countdownTimer = setTimeout(() => {
-        setStartPhase('questions');
+        setStartPhase("questions");
       }, 3000 + 3000);
-
-    } else if (quizStatus === 'waiting' || quizStatus === 'ended') {
-      setStartPhase('none');
-      setCurrentQuestionIndex(0);
+    } else if (quizStatus === "waiting" || quizStatus === "ended") {
+      setStartPhase("none");
+      setCurrentQuestionIndex(0); // Reset for new games
     }
 
+    // Clean up timers to prevent memory leaks
     return () => {
       clearTimeout(warningTimer);
       clearTimeout(countdownTimer);
     };
   }, [quizStatus]);
 
+  // Handler for submitting a player's answer
   const handleAnswerSubmit = async (questionId, userAnswer) => {
     if (!quizId || !currentPlayerProfile || !currentPlayerProfile.userId) {
-      console.error("Cannot submit answer: Missing quizId or currentPlayerProfile.");
       return;
     }
 
     try {
-      const answersCollectionRef = collection(db, `artifacts/${appId}/public/data/quizzes`, quizId, 'answers');
+      // Reference to the 'answers' sub-collection
+      const answersCollectionRef = collection(
+        db,
+        `artifacts/${appId}/public/data/quizzes`,
+        quizId,
+        "answers"
+      );
       const userId = currentPlayerProfile.userId;
 
+      // Add the player's answer to Firestore
       await addDoc(answersCollectionRef, {
         userId: userId,
         questionId: questionId,
         userAnswer: userAnswer,
         submittedAt: new Date(),
       });
-      console.log(`Answer for question ${questionId} submitted by ${userId}:`, userAnswer);
 
+      // Move to the next question or signal completion
       if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
       } else {
-        console.log("Player has answered all questions!");
-        setStartPhase('finished_player_side');
+        setStartPhase("finished_player_side");
 
-        const quizRef = doc(db, `artifacts/${appId}/public/data/quizzes`, quizId);
+        // Increment the finished players count in Firestore
+        const quizRef = doc(
+          db,
+          `artifacts/${appId}/public/data/quizzes`,
+          quizId
+        );
         await updateDoc(quizRef, {
-          playersFinishedCount: increment(1)
+          playersFinishedCount: increment(1),
         });
-        console.log("Incremented playersFinishedCount in Firestore.");
       }
-
     } catch (error) {
-      console.error("Error submitting answer:", error);
       setError("Failed to submit answer. Please try again.");
     }
   };
 
+  // Display error screen if an error occurred
   if (error) {
     return <DefaultError errorMessage={error} />;
   }
 
+  // Display a loading screen while data is being fetched
   if (isLoadingData || !roomId || !quizId || !currentPlayerProfile) {
     return <LoadingQuiz />;
   }
 
+  // Get the current question and total question count for display
   const currentQuestion = questions[currentQuestionIndex];
   const totalQuestions = questions.length;
 
-  // Determine the maximum possible score (total number of questions)
+  // Maximum possible score is the total number of questions
   const maxPossibleScore = questions.length;
-  // Define the max height in pixels for the score bar (h-32 is 128px in Tailwind default)
-  const maxBarHeightPx = 128; // Corresponds to h-32
 
   return (
-    <main className="bg-gradient-to-b from-violet-50 to-white min-h-screen">
+    <main className="bg-gradient-to-b from-violet-50 to-white min-h-screen h-auto">
+      {/* navbar component */}
       <Navbar roomId={roomId} quizName={quizName} />
 
-      {quizStatus === 'waiting' && (
+      {/* waiting screen component */}
+      {quizStatus === "waiting" && (
         <WaitingScreen
           quizName={quizName}
           roomId={roomId}
@@ -177,11 +206,12 @@ const GameRoomManager = () => {
         />
       )}
 
-      {quizStatus === 'started' && (
+      {/* question box component */}
+      {quizStatus === "started" && (
         <>
-          {startPhase === 'warning' && <QuizWarning />}
-          {startPhase === 'countdown' && <CountDown />}
-          {startPhase === 'questions' && currentQuestion && (
+          {startPhase === "warning" && <QuizWarning />}
+          {startPhase === "countdown" && <CountDown />}
+          {startPhase === "questions" && currentQuestion && (
             <QuestionBox
               question={currentQuestion}
               questionNumber={currentQuestionIndex + 1}
@@ -191,64 +221,61 @@ const GameRoomManager = () => {
             />
           )}
 
-          {startPhase === 'finished_player_side' && (
+          {/* waiting screen for result when quiz is ended */}
+          {startPhase === "finished_player_side" && (
             <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-4 text-center">
-              <h2 className="text-3xl font-bold text-green-600 mb-4">You've finished the quiz!</h2>
-              <p className="text-xl text-zinc-700">Waiting for the host to show results.</p>
+              <h2 className="text-3xl font-bold text-green-600 mb-4">
+                You've finished the quiz!
+              </h2>
+              <p className="text-xl text-zinc-700">
+                Waiting for the host to show results.
+              </p>
               {currentPlayerProfile && (
                 <div className="mt-4">
-                  <Image src={currentPlayerProfile.avatar} alt={currentPlayerProfile.name} width={96} height={96} className="rounded-full mx-auto my-2" />
-                  <p className="font-bold text-lg">{currentPlayerProfile.name}</p>
+                  <Image
+                    src={currentPlayerProfile.avatar}
+                    alt={currentPlayerProfile.name}
+                    width={96}
+                    height={96}
+                    className="rounded-full mx-auto my-2"
+                  />
+                  <p className="font-bold text-lg">
+                    {currentPlayerProfile.name}
+                  </p>
                 </div>
               )}
             </div>
           )}
 
-          {startPhase === 'none' && (
-             <div className="game-started-screen p-4 text-center">
-               <h2 className="text-2xl text-green-600 mb-4">Quiz is starting...</h2>
-             </div>
+          {/* quiz starting phase */}
+          {startPhase === "none" && (
+            <div className="game-started-screen p-4 text-center">
+              <h2 className="text-2xl text-green-600 mb-4">
+                Quiz is starting...
+              </h2>
+            </div>
           )}
         </>
       )}
 
-      {quizStatus === 'ended' && (
-        <div className="game-ended-screen p-4 text-center mt-24">
-          <h3 className="text-2xl font-bold text-zinc-800 mb-4">Final Scores:</h3>
-          <div className="flex justify-center items-end gap-6 p-4 rounded-lg overflow-x-auto">
-              {currentPlayers.sort((a, b) => (b.score || 0) - (a.score || 0)).map(user => {
-                  // Calculate bar height based on score
-                  const scorePercentage = maxPossibleScore > 0 ? (user.score || 0) / maxPossibleScore : 0;
-                  const barHeight = Math.max(1, Math.round(scorePercentage * maxBarHeightPx)); // Ensure min height of 1px
+      {/* quiz scoreboard component */}
+      {quizStatus === "ended" && (
+        <>
+          <QuizScoreboard
+            currentPlayers={currentPlayers}
+            maxPossibleScore={maxPossibleScore}
+          />
 
-                  return (
-                      <div key={user.userId} className='w-20 h-auto flex flex-col gap-2 justify-center items-center'>
-
-                          {/* avatar */}
-                          <div className='flex justify-center items-center'>
-                              <Image src={user.avatar} alt={user.name} height={70} width={70} className="rounded-full" />
-                          </div>
-
-                          {/* score bar */}
-                          <div
-                              className='w-full bg-violet-400 rounded-t-lg flex items-end justify-center text-white font-bold text-sm'
-                              style={{ height: `${barHeight}px` }} // Apply dynamic height
-                          >
-                              {/* Optional: Display score on the bar if it's tall enough */}
-                              {barHeight > 20 && (user.score || 0)}
-                          </div>
-
-                          {/* name */}
-                          <p className='font-semibold text-zinc-800 text-center text-sm truncate w-full'>{user.name}</p>
-
-                          {/* points */}
-                          <p className='-mt-2 text-sm text-zinc-500'>{user.score || 0} pts</p>
-
-                      </div>
-                  );
-              })}
+          {/* end game button */}
+          <div className="w-full flex justify-center items-center">
+            <Link
+              href={"/"}
+              className="px-3 text-sm md:px-4 py-2 mb-6 mt-6 text-red-500 bg-red-100 hover:scale-95 rounded-lg transition-all duration-200"
+            >
+              End Quiz
+            </Link>
           </div>
-        </div>
+        </>
       )}
     </main>
   );
@@ -258,7 +285,7 @@ const GameRoomManager = () => {
 const Page = () => {
   return (
     <>
-      <Suspense fallback={<div>Loading quiz page...</div>}>
+      <Suspense fallback={<LoadingQuiz />}>
         <GameRoomManager />
       </Suspense>
     </>

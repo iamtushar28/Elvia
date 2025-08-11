@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { FiPlay, FiBarChart2 } from 'react-icons/fi';
+import EndQuizButton from './EndQuizButton';
 
-const HostGameControls = ({ quizStatus, handleStartQuiz, handleShowResults, isStartButtonEnabled, isShowResultsButtonEnabled }) => {
+const HostGameControls = ({ quizId, db, quizStatus, handleStartQuiz, handleShowResults, isStartButtonEnabled, isShowResultsButtonEnabled }) => {
     const [isStartingQuiz, setIsStartingQuiz] = useState(false);
     const [isShowingResults, setIsShowingResults] = useState(false);
 
@@ -51,7 +53,7 @@ const HostGameControls = ({ quizStatus, handleStartQuiz, handleShowResults, isSt
 
             {/* quiz ended indicator */}
             {quizStatus === 'ended' && (
-                <p className=" px-3 text-sm md:px-4 py-2 text-red-500 bg-red-100 rounded-lg">Quiz ended!</p>
+                <EndQuizButton quizId={quizId} db={db} />
             )}
         </>
     );

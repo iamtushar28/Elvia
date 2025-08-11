@@ -15,7 +15,7 @@ const Navbar = ({ roomId, quizName }) => {
 
             <div className='flex gap-3 items-center'>
                 {/* room id */}
-                <button className='py-2 px-3 text-xs md:text-sm md:font-semibold bg-violet-100 rounded-lg flex items-center gap-2 cursor-pointer transition-all duration-200'>
+                <button className='hidden md:flex py-2 px-3 text-xs md:text-sm md:font-semibold bg-violet-100 rounded-lg items-center gap-2 cursor-pointer transition-all duration-200'>
                     Quiz Name : {quizName}
                 </button>
                 {/* room id */}

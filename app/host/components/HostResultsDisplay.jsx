@@ -33,7 +33,7 @@ const HostResultsDisplay = ({ joinedUsers, maxPossibleScore, maxBarHeightPx }) =
                             </div>
 
                             {/* name */}
-                            <p className='font-semibold text-zinc-800 text-center text-sm truncate w-full'>{user.name}</p>
+                            <p className='font-semibold capitalize text-zinc-800 text-center text-sm truncate w-full'>{user.name}</p>
 
                             {/* points */}
                             <p className='-mt-2 text-sm text-zinc-500'>{user.score || 0} pts</p>

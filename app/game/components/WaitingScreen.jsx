@@ -28,7 +28,7 @@ const WaitingScreen = ({roomId, currentPlayerProfile}) => {
 
                 <p className='text-[#8570C0E6]'>Your Name</p>
 
-                <h4 className='text-lg font-semibold text-zinc-800'>{currentPlayerProfile.name}</h4>
+                <h4 className='text-lg capitalize font-semibold text-zinc-800'>{currentPlayerProfile.name}</h4>
 
             </div>
 
