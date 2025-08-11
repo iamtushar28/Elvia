@@ -1,5 +1,6 @@
 import React from 'react'
 import { PiPlay } from "react-icons/pi";
+import { RiLoader2Fill } from "react-icons/ri"; //loading icon
 
 const Navbar = ({ onStartQuiz, isStartQuizEnabled, isLoading }) => {
     return (
@@ -15,12 +16,18 @@ const Navbar = ({ onStartQuiz, isStartQuizEnabled, isLoading }) => {
                 onClick={onStartQuiz}
                 disabled={!isStartQuizEnabled || isLoading}
                 className={`px-4 py-2 bg-[#8570C0] text-white rounded-lg transition-all duration-300 flex gap-2 items-center cursor-pointer disabled:cursor-not-allowed disabled:opacity-60`}>
-                {isLoading ? 'Starting...' : ( // Show loading text when saving
+
+                {isLoading ?
+                    <>
+                        Starting...  <RiLoader2Fill className='text-lg animate-spin' />
+                    </>
+                    :
                     <>
                         <PiPlay />
                         Start Quiz
                     </>
-                )}
+                }
+
             </button>
 
         </nav>

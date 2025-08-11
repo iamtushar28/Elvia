@@ -52,7 +52,7 @@ const Navbar = ({ roomId, quizName }) => {
             <div className='flex gap-2 items-center'>
 
                 {/* back button */}
-                <Link href={'/create'} className='p-2 text-xl font-semibold hover:bg-white/20 rounded-full flex items-center gap-2 cursor-pointer transition-all duration-200'>
+                <Link href={'/'} className='p-2 text-xl font-semibold hover:bg-white/20 rounded-full flex items-center gap-2 cursor-pointer transition-all duration-200'>
                     <IoArrowBackOutline />
                 </Link>
 

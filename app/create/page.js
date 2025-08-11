@@ -25,7 +25,7 @@ const Page = () => {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = React.useState(false);
-  const [quizName, setQuizName] = React.useState("Untitled Quiz");
+  const [quizName, setQuizName] = React.useState("Untitled Quiz"); //default quiz name
 
   const questions = useWatch({
     control: methods.control,
@@ -80,13 +80,13 @@ const Page = () => {
     setIsLoading(true);
 
     try {
-      const userId = auth.currentUser?.uid || crypto.randomUUID();
+      const userId = auth.currentUser?.uid || crypto.randomUUID(); //generating creatorId
 
       const quizzesCollectionRef = collection(
         db,
         `artifacts/${appId}/public/data/quizzes`
       );
-      const generatedRoomId = crypto.randomUUID().slice(0, 8).toUpperCase(); // Still generate for internal storage
+      const generatedRoomId = crypto.randomUUID().slice(0, 8).toUpperCase(); // generate roomId for internal storage
 
       // Use addDoc to create the document and get its reference (which includes the ID)
       const newQuizDocRef = await addDoc(quizzesCollectionRef, {
@@ -94,15 +94,15 @@ const Page = () => {
         createdAt: new Date(),
         quizName: quizName,
         questions: data.questions,
-        roomId: generatedRoomId, // Store roomId as a field within the document
-        joinedUsers: {},
+        roomId: generatedRoomId, // Store roomId
+        joinedUsers: {}, //Initialize joined user object
         status: "waiting", // Initial status for the quiz
         playersFinishedCount: 0, // Initialize count of players who finished
       });
 
       const quizDocId = newQuizDocRef.id; // Get the auto-generated Firestore Document ID
 
-      // Redirect to /host page, passing ONLY the Firestore Document ID as _quizId
+      // Redirect to /host page, passing the Firestore Document ID as _quizId
       router.push(`/host?_quizId=${quizDocId}`);
     } catch (error) {
       console.error("Error saving quiz:", error);
@@ -114,12 +114,17 @@ const Page = () => {
 
   return (
     <>
+
+      {/* Navbr component*/}
       <Navbar
         onStartQuiz={methods.handleSubmit(onSubmit)}
         isStartQuizEnabled={isFormComplete}
         isLoading={isLoading}
       />
+
       <FormProvider {...methods}>
+        
+        {/* quiz info component */}
         <QuizInfo
           totalQuestions={total}
           completeQuestions={complete}
@@ -128,7 +133,10 @@ const Page = () => {
           quizName={quizName}
           setQuizName={setQuizName}
         />
+
+        {/* quiz creation component */}
         <QuizCreation />
+
       </FormProvider>
     </>
   );

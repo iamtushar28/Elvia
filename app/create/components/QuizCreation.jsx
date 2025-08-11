@@ -51,8 +51,7 @@ const QuizCreation = () => {
         // The default structure for a new question object
         append({
             type, // This is crucial for rendering and saving
-            timeLimit,
-            // Include default values for each question type
+            timeLimit, // Include default values for each question type
             questionText: '',
             options: type === 'mcq' ? [{ optionText: '' }, { optionText: '' }, { optionText: '' }, { optionText: '' }] : [], // Ensure 4 options for MCQ
             correctOptionIndex: null,
@@ -144,6 +143,7 @@ const QuizCreation = () => {
                 </div>
             )}
 
+            {/* manual quiz creation section */}
             {manualCreation && (
                 <>
                     {/* Add Questions Section */}
@@ -151,6 +151,8 @@ const QuizCreation = () => {
                         <h2 className='text-lg text-zinc-700'>Add Questions</h2>
                         <div className='flex flex-col gap-4 md:flex-row md:justify-between md:items-center'>
                             <div className="flex gap-4">
+
+                                {/* add type of questions MCQ, True/False or Fill Blank */}
                                 {quizTypes.map(({ type, label, shortLabel }) => (
                                     <button
                                         key={type}
@@ -161,7 +163,10 @@ const QuizCreation = () => {
                                         <span className="block md:hidden">{shortLabel}</span>
                                     </button>
                                 ))}
+
                             </div>
+
+                            {/* set time for quiz question */}
                             <div className='flex items-center gap-3'>
                                 <h2 className='text-xs text-zinc-800 flex gap-1 items-center'>
                                     <LuTimer className='text-[#8570C0] text-lg' />
@@ -174,6 +179,7 @@ const QuizCreation = () => {
                                     className='w-20 h-10 px-3 border border-gray-200 outline-none rounded-lg hover:ring-2 hover:ring-violet-400 transition-all duration-200'
                                 />
                             </div>
+
                         </div>
                     </div>
 
@@ -189,7 +195,7 @@ const QuizCreation = () => {
 
                     {/* Render All Added Quizzes */}
                     <div>
-                        {fields.map((quiz, index) => ( // <--- RENDER FROM `fields` ARRAY
+                        {fields.map((quiz, index) => ( // RENDER FROM `fields` ARRAY
                             <div key={quiz.id} className="flex flex-col gap-5">
                                 {renderQuiz(quiz, index + 1, index)}
                             </div>
@@ -197,7 +203,7 @@ const QuizCreation = () => {
                     </div>
 
 
-                    {/* Quiz Type Buttons (at the bottom) */}
+                    {/*Add  Quiz Type Buttons MCQ, True/False, Fill Blank (at the bottom for easy reach out) */}
                     {(fields.length > 0) && (
                         <div className="flex gap-4 mt-5">
                             {quizTypes.map(({ type, label, shortLabel }) => (

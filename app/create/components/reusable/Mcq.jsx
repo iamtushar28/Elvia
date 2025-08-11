@@ -12,7 +12,7 @@ import {
 
 
 const Mcq = ({ index, number, timeLimit, onDelete, control, register, setValue }) => {
-   
+
     // Use useWatch to get the current values of this specific question in the form array
     // The name should be 'questions.INDEX' to match the useFieldArray structure
     const values = useWatch({ control, name: `questions.${index}` });
@@ -33,10 +33,13 @@ const Mcq = ({ index, number, timeLimit, onDelete, control, register, setValue }
 
     return (
         <div className='w-full h-auto pb-8 mt-6 bg-white rounded-lg border border-violet-300 overflow-hidden'>
-            {/* Header */}
+
+            {/* question infoo */}
             <div className='h-20 w-full px-3 md:px-8 bg-violet-50 flex items-center justify-between'>
                 <div className='flex gap-4'>
                     <h4 className='h-6 w-6 mt-2 text-violet-500 bg-violet-100 rounded-full text-center'>{number}</h4>
+
+                    {/* // */}
                     <div>
                         <h2 className='text-zinc-900'>Multiple Choice</h2>
                         <p className='text-sm text-zinc-500 flex gap-1 items-center'>
@@ -44,14 +47,18 @@ const Mcq = ({ index, number, timeLimit, onDelete, control, register, setValue }
                             {timeLimit} sec
                         </p>
                     </div>
+
+                    {/* complete/Incomplete indicator */}
                     <button
-                        className={`h-fit py-1 px-3 text-xs rounded-xl ${
-                            isComplete ? 'text-green-600 bg-green-100' : 'text-red-500 bg-red-100'
-                        }`}
+                        className={`h-fit py-1 px-3 text-xs rounded-xl ${isComplete ? 'text-green-600 bg-green-100' : 'text-red-500 bg-red-100'
+                            }`}
                     >
                         {isComplete ? 'Complete' : 'Incomplete'}
                     </button>
+
                 </div>
+
+                {/* delete question button */}
                 <button
                     onClick={onDelete}
                     className='h-10 w-10 text-lg hover:text-red-500 hover:bg-red-100 rounded-full transition-all flex justify-center items-center cursor-pointer'
@@ -82,6 +89,9 @@ const Mcq = ({ index, number, timeLimit, onDelete, control, register, setValue }
                     <RiCheckboxCircleLine className='text-[#8570C0] text-lg' />
                     Options (select correct answer)
                 </h2>
+
+                {/* // */}
+
                 <div className='flex flex-col gap-4 mt-5'>
                     {/* Iterate through 4 options */}
                     {[0, 1, 2, 3].map((optIdx) => (
@@ -93,12 +103,12 @@ const Mcq = ({ index, number, timeLimit, onDelete, control, register, setValue }
                                 className='min-h-5 min-w-5 border border-zinc-300 bg-white rounded-full flex justify-center items-center group cursor-pointer'
                             >
                                 <div
-                                    className={`h-3 w-3 rounded-full transition-all ${
-                                        values?.correctOptionIndex === optIdx
-                                            ? 'bg-green-500'
-                                            : 'group-hover:bg-green-400'
-                                    }`}
-                                ></div>
+                                    className={`h-3 w-3 rounded-full transition-all ${values?.correctOptionIndex === optIdx
+                                        ? 'bg-green-500'
+                                        : 'group-hover:bg-green-400'
+                                        }`}
+                                >
+                                </div>
                             </button>
 
                             {/* option input */}

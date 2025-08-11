@@ -26,7 +26,6 @@ const Hero = () => {
                 {/* join room component */}
                 <JoinRoom />
 
-                <div className='bg-pink-100'></div>
 
                 <h6 className='text-zinc-500 -mt-3'>Or</h6>
 

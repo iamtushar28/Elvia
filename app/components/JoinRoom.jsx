@@ -36,16 +36,13 @@ const JoinRoom = () => {
             }
 
             // Create a query to find a quiz with the entered roomPin
-            // Use the imported 'db' instance
             const quizzesRef = collection(db, `artifacts/${appId}/public/data/quizzes`);
             const q = query(quizzesRef, where("roomId", "==", roomPin.trim().toUpperCase()));
 
             const querySnapshot = await getDocs(q);
 
             if (!querySnapshot.empty) {
-                // Quiz found! Redirect to the host page (or a player view page)
-                const quizDoc = querySnapshot.docs[0]; // Get the first matching document
-                console.log("Found quiz:", quizDoc.id, quizDoc.data());
+                // Quiz found -> Redirect to the join page with roomId
                 router.push(`/join?roomId=${roomPin.trim().toUpperCase()}`);
             } else {
                 // No quiz found with that PIN
@@ -79,13 +76,18 @@ const JoinRoom = () => {
                     disabled={isLoading}
                     className={`px-4 py-2 text-white bg-[#8570C0] hover:bg-[#886fcbda] rounded-lg transition-all duration-300 flex items-center gap-1 disabled:cursor-not-allowed cursor-pointer`}>
                     {isLoading ?
-                        <>Joining...  <RiLoader2Fill className='text-lg animate-spin' /></>
+                        <>
+                            Joining...  <RiLoader2Fill className='text-lg animate-spin' />
+                        </>
                         :
-                        <>Join</>
+                        <>
+                            Join
+                        </>
                     }
                 </button>
             </div>
 
+            {/* error message */}
             {error && (
                 <p className="text-red-500 text-sm mt-2">{error}</p>
             )}
