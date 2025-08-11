@@ -213,7 +213,7 @@ const GameRoomManager = () => {
       )}
 
       {quizStatus === 'ended' && (
-        <div className="game-ended-screen p-4 text-center">
+        <div className="game-ended-screen p-4 text-center mt-24">
           <h3 className="text-2xl font-bold text-zinc-800 mb-4">Final Scores:</h3>
           <div className="flex justify-center items-end gap-6 p-4 rounded-lg overflow-x-auto">
               {currentPlayers.sort((a, b) => (b.score || 0) - (a.score || 0)).map(user => {
