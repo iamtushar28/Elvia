@@ -91,7 +91,7 @@ const MusicPlayer = () => {
             {/* Open Music list button */}
             <button
                 onClick={() => setDropdownOpen((prev) => !prev)}
-                className={`px-3 py-2 text-[#8570C0] hover:bg-zinc-100 rounded-lg transition-all duration-300 flex gap-2 items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                className={`px-3 py-2 border md:border-0 border-slate-200 text-[#8570C0] hover:bg-zinc-100 rounded-lg transition-all duration-300 flex gap-2 items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
                 <FiMusic />
                 <span className="hidden md:block">{currentTrack.name}</span>
@@ -109,7 +109,7 @@ const MusicPlayer = () => {
             <button
                 onClick={toggleMute}
                 disabled={isLoading}
-                className={`h-fit px-3 py-2 text-xl text-[#8570C0] hover:bg-zinc-100 rounded-lg transition-all duration-300 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} flex justify-center items-center`}>
+                className={`h-fit px-3 py-2 border md:border-0 md:text-xl border-slate-200 text-[#8570C0] hover:bg-zinc-100 rounded-lg transition-all duration-300 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} flex justify-center items-center`}>
                 {isMuted ? <FiVolumeX /> : <FiVolume2 />}
             </button>
 

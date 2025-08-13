@@ -19,7 +19,7 @@ const Navbar = ({ onStartQuiz, isStartQuizEnabled, isLoading }) => {
 
                 {isLoading ?
                     <>
-                        Starting...  <RiLoader2Fill className='text-lg animate-spin' />
+                        Starting  <RiLoader2Fill className='text-lg animate-spin' />
                     </>
                     :
                     <>

@@ -125,7 +125,7 @@ const CreateProfile = ({ roomId }) => {
                 disabled={isLoading || !username.trim() || !selectedAvatarId}
             >
                 {isLoading ?
-                    <>Joining...  <RiLoader2Fill className='text-lg animate-spin' /></>
+                    <>Joining  <RiLoader2Fill className='text-lg animate-spin' /></>
                     :
                     <>Join</>
                 }

@@ -97,14 +97,6 @@ const HostWaitingArea = ({ joinedUsers }) => {
                     <JoinedUserCard key={user.userId} user={user} position={user.position} />
                 ))
             )}
-
-            {/* dog animation image */}
-            <iframe
-                loading="lazy"
-                sandbox="allow-scripts allow-same-origin"
-                className="h-48"
-                src="https://lottie.host/embed/f4b2a214-a8a6-4eac-9471-a03bf7f63e70/VlMWbTHlQb.lottie">
-            </iframe>
         </>
     );
 };

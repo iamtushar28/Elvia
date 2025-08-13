@@ -77,7 +77,7 @@ const JoinRoom = () => {
                     className={`px-4 py-2 text-white bg-[#8570C0] hover:bg-[#886fcbda] rounded-lg transition-all duration-300 flex items-center gap-1 disabled:cursor-not-allowed cursor-pointer`}>
                     {isLoading ?
                         <>
-                            Joining...  <RiLoader2Fill className='text-lg animate-spin' />
+                            Joining  <RiLoader2Fill className='text-lg animate-spin' />
                         </>
                         :
                         <>
