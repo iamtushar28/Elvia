@@ -3,7 +3,11 @@
 import React from 'react';
 import Image from 'next/image'; // Ensure Image is imported
 
-const HostResultsDisplay = ({ joinedUsers, maxPossibleScore, maxBarHeightPx }) => {
+const HostResultsDisplay = ({ joinedUsers, maxPossibleScore }) => {
+
+    // Define the max height in pixels for the score bar (h-32 is 128px in Tailwind default)
+    const maxBarHeightPx = 200;
+
     return (
         <div className="text-center">
 

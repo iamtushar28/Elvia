@@ -112,11 +112,11 @@ const GameRoomManager = () => {
 
       warningTimer = setTimeout(() => {
         setStartPhase("countdown");
-      }, 3000);
+      }, 4000);
 
       countdownTimer = setTimeout(() => {
         setStartPhase("questions");
-      }, 3000 + 3000);
+      }, 4000 + 4000);
     } else if (quizStatus === "waiting" || quizStatus === "ended") {
       setStartPhase("none");
       setCurrentQuestionIndex(0); // Reset for new games
@@ -224,7 +224,7 @@ const GameRoomManager = () => {
           {/* waiting screen for result when quiz is ended */}
           {startPhase === "finished_player_side" && (
             <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-4 text-center">
-              <h2 className="text-3xl font-bold text-green-600 mb-4">
+              <h2 className="text-3xl font-bold text-green-500 mb-4">
                 You've finished the quiz!
               </h2>
               <p className="text-xl text-zinc-700">
@@ -237,9 +237,9 @@ const GameRoomManager = () => {
                     alt={currentPlayerProfile.name}
                     width={96}
                     height={96}
-                    className="rounded-full mx-auto my-2"
+                    className="rounded-full mx-auto my-2 shadow"
                   />
-                  <p className="font-bold text-lg">
+                  <p className="font-bold text-lg capitalize text-violet-500">
                     {currentPlayerProfile.name}
                   </p>
                 </div>

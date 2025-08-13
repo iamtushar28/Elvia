@@ -28,8 +28,6 @@ const Hero = ({
 
     // Determine the maximum possible score (total number of questions)
     const maxPossibleScore = quizQuestions.length;
-    // Define the max height in pixels for the score bar (h-32 is 128px in Tailwind default)
-    const maxBarHeightPx = 128;
 
     // Function to handle copying the room ID to the clipboard
     const handleCopyRoomId = () => {
@@ -49,6 +47,7 @@ const Hero = ({
         }
     };
 
+    //edge cases for handling start quiz when no user joined and showing result when all users not submitted quiz
     const isStartButtonEnabled = quizStatus === 'waiting' && joinedUsers.length > 0;
     const isShowResultsButtonEnabled = quizStatus === 'started' && allPlayersFinished;
 
@@ -62,8 +61,8 @@ const Hero = ({
             <div className='w-full absolute right-2 md:right-4 top-22 flex flex-col gap-3 items-end'>
 
                 {/* Quiz name display */}
-                <div className='w-fit px-4 py-1 text-[#8570C0] bg-white rounded-3xl shadow'>
-                    <p>Quiz Name: {quizName}</p>
+                <div className='w-fit px-4 text-sm py-2 text-[#8570C0] bg-white rounded-3xl shadow'>
+                    <p>Quiz Name: <span className='font-semibold'>{quizName}</span></p>
                 </div>
 
                 {/* Game PIN button for mobile screens (copies ID to clipboard) */}
@@ -74,7 +73,7 @@ const Hero = ({
                         <span>Copied!</span>
                     ) : (
                         <>
-                            Game PIN : {roomId ? roomId : 'Loading...'}
+                            Game PIN : {roomId ? <span className='font-semibold'>{roomId}</span> : 'Loading...'}
                             <LuCopy className='text-lg' />
                         </>
                     )}
@@ -114,7 +113,6 @@ const Hero = ({
                 <HostResultsDisplay
                     joinedUsers={joinedUsers}
                     maxPossibleScore={maxPossibleScore}
-                    maxBarHeightPx={maxBarHeightPx}
                 />
             )}
 

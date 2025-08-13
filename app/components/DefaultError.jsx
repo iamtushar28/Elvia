@@ -1,6 +1,7 @@
 import AnimatedBackground from '@/app/components/AnimatedBackground'
 import Link from 'next/link'
 import React from 'react'
+import ElviaLogo from './ElviaLogo'
 
 const DefaultError = ({ errorMessage }) => {
     return (
@@ -9,8 +10,8 @@ const DefaultError = ({ errorMessage }) => {
             {/* Animated Background component */}
             <AnimatedBackground />
 
-            {/* hero title */}
-            <h1 className='text-6xl font-bold text-[#8570C0]'>Elvia</h1>
+            {/* Elvia logo component */}
+            <ElviaLogo />
 
             {/* error message card */}
             <div className='w-full md:w-[28rem] h-auto px-4 md:px-12 py-8 bg-white shadow rounded-lg flex flex-col gap-5 justify-center items-center'>

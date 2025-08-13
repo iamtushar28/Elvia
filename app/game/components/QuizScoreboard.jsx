@@ -1,7 +1,11 @@
 import React from "react";
 import Image from "next/image"; // Assuming you are using Next.js
 
-const QuizScoreboard = ({ currentPlayers, maxPossibleScore, maxBarHeightPx = 150 }) => {
+const QuizScoreboard = ({ currentPlayers, maxPossibleScore }) => {
+
+    // Define the max height in pixels for the score bar (h-32 is 128px in Tailwind default)
+    const maxBarHeightPx = 200;
+
     // Sort players in descending order by score
     const sortedPlayers = [...currentPlayers].sort(
         (a, b) => (b.score || 0) - (a.score || 0)
