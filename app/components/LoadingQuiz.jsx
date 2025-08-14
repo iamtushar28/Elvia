@@ -1,6 +1,7 @@
 import React from 'react'
 import { RiLoader2Fill } from "react-icons/ri"; //loading icon
 import AnimatedBackground from './AnimatedBackground';
+import ElviaLogo from './ElviaLogo';
 
 
 const LoadingQuiz = () => {
@@ -11,7 +12,7 @@ const LoadingQuiz = () => {
             <AnimatedBackground />
 
             {/* hero title */}
-            <h1 className='text-6xl font-bold text-[#8570C0]'>Elvia</h1>
+            <ElviaLogo />
 
             {/* loading spinner */}
             <div>

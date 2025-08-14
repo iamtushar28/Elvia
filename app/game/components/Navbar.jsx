@@ -1,4 +1,6 @@
 import React from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 
 const Navbar = ({ roomId, quizName }) => {
     return (
@@ -7,9 +9,10 @@ const Navbar = ({ roomId, quizName }) => {
             {/* logo */}
             <div className='flex gap-2 items-center'>
 
-                <h1 className='text-xl font-semibold'>
-                    Elvia Creator
-                </h1>
+                {/* logo */}
+                <Link href={'/'}>
+                    <Image src={'/logo.png'} alt='logo' height={80} width={100} />
+                </Link>
 
             </div>
 

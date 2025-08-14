@@ -27,21 +27,26 @@ const Page = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [quizName, setQuizName] = React.useState("Untitled Quiz"); //default quiz name
 
+  //watching quiz states for completeness of all fields
   const questions = useWatch({
     control: methods.control,
     name: "questions",
     defaultValue: [],
   });
 
+  //getting quiz summary
   const quizSummary = React.useMemo(() => {
     const total = questions.length;
     let totalSeconds = 0;
     let completeCount = 0;
 
+    //calculating total time to complete quiz
     questions.forEach((q) => {
       totalSeconds += q.timeLimit || 0;
 
       let isQuestionComplete = false;
+
+      //checking compelteness of each quiz question fields e.g. Question, Options, Selected answer
       if (q.type === "mcq") {
         isQuestionComplete =
           q.questionText?.trim() &&
@@ -57,13 +62,15 @@ const Page = () => {
       }
 
       if (isQuestionComplete) {
-        completeCount++;
+        completeCount++; //increment count of complete quiz questions
       }
     });
 
+    //calculating incomplete question count
     const incompleteCount = total - completeCount;
     const isFormComplete = total > 0 && incompleteCount === 0;
 
+    //returning all details of quiz
     return {
       total,
       complete: completeCount,
@@ -73,15 +80,17 @@ const Page = () => {
     };
   }, [questions]);
 
-  const { total, complete, incomplete, totalSeconds, isFormComplete } =
-    quizSummary;
+  //initialize fields
+  const { total, complete, incomplete, totalSeconds, isFormComplete } = quizSummary;
 
+  //run when quiz is submitted
   const onSubmit = async (data) => {
     setIsLoading(true);
 
     try {
       const userId = auth.currentUser?.uid || crypto.randomUUID(); //generating creatorId
 
+      //referance to tha quizzes collection
       const quizzesCollectionRef = collection(
         db,
         `artifacts/${appId}/public/data/quizzes`
@@ -114,7 +123,6 @@ const Page = () => {
 
   return (
     <>
-
       {/* Navbr component*/}
       <Navbar
         onStartQuiz={methods.handleSubmit(onSubmit)}
@@ -123,7 +131,6 @@ const Page = () => {
       />
 
       <FormProvider {...methods}>
-        
         {/* quiz info component */}
         <QuizInfo
           totalQuestions={total}
@@ -136,7 +143,6 @@ const Page = () => {
 
         {/* quiz creation component */}
         <QuizCreation />
-
       </FormProvider>
     </>
   );

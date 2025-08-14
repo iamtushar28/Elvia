@@ -14,7 +14,10 @@ const DefaultError = ({ errorMessage }) => {
             <ElviaLogo />
 
             {/* error message card */}
-            <div className='w-full md:w-[28rem] h-auto px-4 md:px-12 py-8 bg-white shadow rounded-lg flex flex-col gap-5 justify-center items-center'>
+            <div className='w-full md:w-[28rem] h-auto px-4 md:px-12 py-8 bg-white shadow rounded-lg flex flex-col gap-5 justify-center items-center relative group'>
+
+                {/* cat animation */}
+                <iframe src="https://lottie.host/embed/01e470b1-58fa-43e8-946e-4acabffc1289/ymLLwubY9D.lottie" className='w-20 h-auto absolute -top-[66%] right-0 hidden group-hover:block'></iframe>
 
                 {/* title */}
                 <h4 className='text-xl text-red-500 font-semibold'>Error</h4>

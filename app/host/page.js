@@ -63,7 +63,7 @@ const RoomComponent = () => {
 
       return () => unsubscribe();
     } else {
-      setError("No quiz ID provided. Please create or join a new quiz..");
+      setError("No quiz ID provided. Please create or join a new quiz.");
       setIsLoadingQuizData(false);
     }
   }, [searchParams]);
@@ -91,7 +91,7 @@ const RoomComponent = () => {
         db={db}
         playersFinishedCount={playersFinishedCount}
         allPlayersFinished={allPlayersFinished}
-        quizQuestions={questions} // NEW: Pass the full questions array
+        quizQuestions={questions} // Passing the full questions array
       />
     </>
   );

@@ -1,3 +1,5 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react'
 import { PiPlay } from "react-icons/pi";
 import { RiLoader2Fill } from "react-icons/ri"; //loading icon
@@ -7,9 +9,9 @@ const Navbar = ({ onStartQuiz, isStartQuizEnabled, isLoading }) => {
         <nav className='h-[66px] w-full px-2 md:px-8 text-[#8570C0] bg-white flex justify-between items-center fixed top-0 left-0 right-0 z-50 shadow-sm'>
 
             {/* logo */}
-            <h1 className='text-xl font-semibold'>
-                Elvia Creator
-            </h1>
+            <Link href={'/'}>
+                <Image src={'/logo.png'} alt='logo' height={80} width={100} />
+            </Link>
 
             {/* start quiz button */}
             <button
