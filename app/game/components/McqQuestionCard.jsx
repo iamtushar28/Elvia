@@ -24,10 +24,6 @@ const McqQuestionCard = ({ questionData, onAnswerSubmit }) => {
 
         setIsSubmitting(true);
         try {
-            // Call the onAnswerSubmit function passed from GameRoomManager
-            // Pass the question's unique ID (e.g., its index or a generated ID) and the user's answer
-            // For simplicity, using the question's index in the array as its ID for now.
-            // In a real app, questionData might have a unique 'id' field.
             await onAnswerSubmit(questionData.id || questionData.questionText, selectedOptionIndex); // Pass selected index
             setSelectedOptionIndex(null); // Reset selection for next question
         } catch (error) {
