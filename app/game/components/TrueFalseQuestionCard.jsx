@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react'; // Import useState
-import { FaArrowRight } from "react-icons/fa";
 import { RiLoader2Fill } from "react-icons/ri"; // For loading spinner
 
 // TrueFalseQuestionCard now accepts questionData and onAnswerSubmit
@@ -97,8 +96,7 @@ const TrueFalseQuestionCard = ({ questionData, onAnswerSubmit }) => {
                             <RiLoader2Fill className="animate-spin text-xl" />
                         ) : (
                             <>
-                                Next
-                                <FaArrowRight />
+                               Submit
                             </>
                         )}
                     </button>

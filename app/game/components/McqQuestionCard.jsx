@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react'; // Import useState
-import { FaArrowRight } from "react-icons/fa";
 import { RiLoader2Fill } from "react-icons/ri"; // For loading spinner
 
 // McqQuestionCard now accepts questionData and onAnswerSubmit
@@ -49,19 +48,23 @@ const McqQuestionCard = ({ questionData, onAnswerSubmit }) => {
                         key={index} // Use index as key for options within a question
                         onClick={() => handleOptionSelect(index)}
                         className={`
-                            w-full h-14 md:h-16 px-4 border-2 rounded-lg flex justify-start items-center gap-4 cursor-pointer transition-all duration-300
+                            w-full h-fit py-3 px-2 md:px-4 md:py-4 border-2 rounded-lg flex justify-start items-start gap-2 md:gap-4 cursor-pointer transition-all duration-300
                             ${selectedOptionIndex === index ? 'bg-violet-100 border-violet-500' : 'border-zinc-200 hover:bg-violet-50 hover:border-violet-400'}
                             ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}
                         `}
                         disabled={isSubmitting}
                     >
+                        {/* options index A/B/C/D */}
                         <div className={`
-                            h-8 w-8 rounded-full flex justify-center items-center
+                            min-h-8 min-w-8 rounded-full flex justify-center items-center
                             ${selectedOptionIndex === index ? 'bg-violet-500 text-white' : 'text-violet-400 bg-violet-100'}
                         `}>
                             {optionLetters[index]}
                         </div>
-                        {option.optionText}
+
+                        {/* options */}
+                        <p className='text-start'>{option.optionText}</p>
+                        
                     </button>
                 ))}
 
@@ -80,8 +83,7 @@ const McqQuestionCard = ({ questionData, onAnswerSubmit }) => {
                             <RiLoader2Fill className="animate-spin text-xl" />
                         ) : (
                             <>
-                                Next
-                                <FaArrowRight />
+                               Submit
                             </>
                         )}
                     </button>

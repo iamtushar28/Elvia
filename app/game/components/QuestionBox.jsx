@@ -58,7 +58,7 @@ const QuestionBox = ({ question, questionNumber, totalQuestions, onAnswerSubmit,
 
                     {/* quiz timer */}
                     <h2 className='text-lg md:text-2xl font-semibold flex gap-2 items-center'>
-                        <LuTimer className='text-[#8570C0E6]' />
+                        <LuTimer className={`${(timerCount < 10) ? 'text-red-500 animate-pulse' : 'text-[#8570C0E6]'}`} />
                         {timerCount} {/* Display the functional timer count */}
                     </h2>
                 </div>
@@ -69,7 +69,6 @@ const QuestionBox = ({ question, questionNumber, totalQuestions, onAnswerSubmit,
                         questionData={question}
                         onAnswerSubmit={onAnswerSubmit}
                         currentPlayerProfile={currentPlayerProfile}
-                        isTimerActive={timerCount > 0} // Pass timer status to disable input if needed
                     />
                 )}
                 {question.type === 'truefalse' && (
@@ -77,7 +76,7 @@ const QuestionBox = ({ question, questionNumber, totalQuestions, onAnswerSubmit,
                         questionData={question}
                         onAnswerSubmit={onAnswerSubmit}
                         currentPlayerProfile={currentPlayerProfile}
-                        isTimerActive={timerCount > 0} // Pass timer status
+
                     />
                 )}
                 {question.type === 'fillblank' && (
@@ -85,7 +84,6 @@ const QuestionBox = ({ question, questionNumber, totalQuestions, onAnswerSubmit,
                         questionData={question}
                         onAnswerSubmit={onAnswerSubmit}
                         currentPlayerProfile={currentPlayerProfile}
-                        isTimerActive={timerCount > 0} // Pass timer status
                     />
                 )}
 
