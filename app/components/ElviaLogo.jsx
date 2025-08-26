@@ -5,7 +5,7 @@ const ElviaLogo = () => {
     return (
         <div className='mb-4'>
 
-            <Image src={'/logo.png'} alt='logo' height={400} width={200} />
+            <Image src={'/logo.png'} alt='elvia' height={400} width={200} />
 
         </div>
     )

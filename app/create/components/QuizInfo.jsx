@@ -95,7 +95,7 @@ const QuizInfo = ({ totalQuestions, completeQuestions, incompleteQuestions, tota
                         {/* total complete Questions */}
                         {totalQuestions > 0 && incompleteQuestions === 0 && (
                             <button className='px-2 md:px-3 py-1 text-xs md:text-sm text-green-600 bg-green-50 rounded-2xl'>
-                                Completed
+                               {completeQuestions} Completed
                             </button>
                         )}
                     </div>

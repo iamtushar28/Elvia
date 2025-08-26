@@ -13,15 +13,17 @@ const TrueFalse = ({ index, number, timeLimit, onDelete, control, register, setV
     const values = useWatch({ control, name: `questions.${index}` });
 
     // Determine completeness based on the watched values
-    // 'correctAnswer' will be a boolean (true or false) for True/False questions
+    // 'correctAnswer' will be a string ('True' or 'False') from AI, or boolean if manually set
     const isComplete =
         values?.questionText?.trim() !== '' &&
-        (values?.correctAnswer === true || values?.correctAnswer === false); // Check if a boolean value is set
-
+        (values?.correctAnswer === 'True' || values?.correctAnswer === 'False' || // For AI-generated string answers
+         values?.correctAnswer === true || values?.correctAnswer === false);       // For manually set boolean answers
 
     const handleSelectAnswer = (answer) => {
         // Use setValue to update the 'correctAnswer' field for this specific question
-        setValue(`questions.${index}.correctAnswer`, answer, { shouldValidate: true });
+        // We convert the boolean to a string ('True'/'False') for consistency with AI output
+        // when manually setting, to avoid potential type conflicts later.
+        setValue(`questions.${index}.correctAnswer`, answer ? 'True' : 'False', { shouldValidate: true });
     };
 
     return (
@@ -93,7 +95,8 @@ const TrueFalse = ({ index, number, timeLimit, onDelete, control, register, setV
                         className='flex gap-3 items-center group cursor-pointer'
                     >
                         <div className='min-h-5 min-w-5 border border-zinc-300 bg-white rounded-full cursor-pointer flex justify-center items-center'>
-                            <div className={`h-3 w-3 rounded-full transition-all duration-200 ${values?.correctAnswer === true ? 'bg-green-500' : 'group-hover:bg-green-400'
+                            {/* Compare with string 'True' for AI-generated answers */}
+                            <div className={`h-3 w-3 rounded-full transition-all duration-200 ${values?.correctAnswer === 'True' ? 'bg-green-500' : 'group-hover:bg-green-400'
                                 }`}></div>
                         </div>
                         <h4 className='h-10 w-full px-4 bg-gray-50 text-start flex items-center rounded'>True</h4>
@@ -106,7 +109,8 @@ const TrueFalse = ({ index, number, timeLimit, onDelete, control, register, setV
                         className='flex gap-3 items-center group cursor-pointer'
                     >
                         <div className='min-h-5 min-w-5 border border-zinc-300 bg-white rounded-full cursor-pointer flex justify-center items-center'>
-                            <div className={`h-3 w-3 rounded-full transition-all duration-200 ${values?.correctAnswer === false ? 'bg-green-500' : 'group-hover:bg-green-400'
+                            {/* Compare with string 'False' for AI-generated answers */}
+                            <div className={`h-3 w-3 rounded-full transition-all duration-200 ${values?.correctAnswer === 'False' ? 'bg-green-500' : 'group-hover:bg-green-400'
                                 }`}></div>
                         </div>
                         <h4 className='h-10 w-full px-4 bg-gray-50 text-start flex items-center rounded'>False</h4>

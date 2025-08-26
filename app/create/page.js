@@ -56,7 +56,7 @@ const Page = () => {
       } else if (q.type === "truefalse") {
         isQuestionComplete =
           q.questionText?.trim() &&
-          (q.correctAnswer === true || q.correctAnswer === false);
+          (q.correctAnswer === true || q.correctAnswer === false || q.correctAnswer === 'True' || q.correctAnswer === 'False');
       } else if (q.type === "fillblank") {
         isQuestionComplete = q.questionText?.trim() && q.correctAnswer?.trim();
       }
@@ -143,6 +143,7 @@ const Page = () => {
 
         {/* quiz creation component */}
         <QuizCreation />
+        
       </FormProvider>
     </>
   );

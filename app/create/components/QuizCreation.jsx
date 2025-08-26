@@ -7,8 +7,8 @@ import TrueFalse from './reusable/TrueFalse'
 import FillInBlank from './reusable/FillInBlank'
 import { LuBookText } from "react-icons/lu";
 import { RiRobot3Line } from "react-icons/ri";
-import { BsStars } from "react-icons/bs";
 import { LuTimer } from "react-icons/lu";
+import AiQuizGeneration from './AiQuizGeneration';
 
 const QuizCreation = () => {
 
@@ -29,7 +29,7 @@ const QuizCreation = () => {
     });
 
     // --- State for component's UI (not form data) ---
-    const [timeLimit, setTimeLimit] = useState(20);
+    const [timeLimit, setTimeLimit] = useState(30);
     const [manualCreation, setManualCreation] = useState(true);
     const [aiGeneration, setAIGeneration] = useState(false);
 
@@ -92,6 +92,13 @@ const QuizCreation = () => {
         { type: 'fillblank', label: '+ Fill in Blank', shortLabel: '+ Fill' },
     ];
 
+    // Adding AI-generated questions
+    const handleAIQuestionsGenerated = (generatedQuestions) => {
+        generatedQuestions.forEach(question => {
+            // Append each AI-generated question to the form array
+            append(question);
+        });
+    };
 
     return (
         <section className='w-full px-3 md:px-10 lg:px-36 mt-8 mb-20'>
@@ -119,28 +126,11 @@ const QuizCreation = () => {
 
             {/* ai promt section */}
             {aiGeneration && (
-                <div className='w-full h-auto mt-6 px-3 md:px-6 py-6 md:py-8 bg-white rounded-lg shadow flex gap-5 flex-col'>
-
-                    {/* title */}
-                    <div className='flex gap-2'>
-                        <RiRobot3Line className='text-[#8570C0] text-3xl md:text-2xl mt-1' />
-                        <div>
-                            <h2 className='text-lg text-zinc-700'>
-                                Generate Questions with AI
-                            </h2>
-                            <p className='text-zinc-500 text-sm'>Paste content about a topic, and our AI will generate quiz questions for you.</p>
-                        </div>
-                    </div>
-
-                    <textarea name="prompt" id="prompt" placeholder='Paste content about your topic here...' rows={5} className='p-4 w-full border border-zinc-300 outline-none rounded-lg placeholder:text-zinc-400 hover:ring-2 hover:ring-violet-400'></textarea>
-
-                    {/* genarate questions button */}
-                    <button className='w-fit px-4 py-2 text-white bg-[#8570C0] rounded-lg cursor-pointer transition-all duration-300 flex gap-2 items-center'>
-                        <BsStars />
-                        Generate Questions
-                    </button>
-
-                </div>
+                <>
+                    <AiQuizGeneration
+                        onQuestionsGenerated={handleAIQuestionsGenerated} // Pass callback for generated questions
+                    />
+                </>
             )}
 
             {/* manual quiz creation section */}
@@ -182,44 +172,46 @@ const QuizCreation = () => {
 
                         </div>
                     </div>
-
-                    {/* Quiz Questions Count */}
-                    <div className='flex items-center gap-4 mt-6'>
-                        <h2 className='text-lg text-zinc-700 font-semibold'>
-                            Quiz Questions
-                        </h2>
-                        <h4 className='h-6 w-6 text-violet-500 bg-violet-100 rounded-full text-center'>
-                            {fields.length} {/* Use fields.length for the count */}
-                        </h4>
-                    </div>
-
-                    {/* Render All Added Quizzes */}
-                    <div>
-                        {fields.map((quiz, index) => ( // RENDER FROM `fields` ARRAY
-                            <div key={quiz.id} className="flex flex-col gap-5">
-                                {renderQuiz(quiz, index + 1, index)}
-                            </div>
-                        ))}
-                    </div>
-
-
-                    {/*Add  Quiz Type Buttons MCQ, True/False, Fill Blank (at the bottom for easy reach out) */}
-                    {(fields.length > 0) && (
-                        <div className="flex gap-4 mt-5">
-                            {quizTypes.map(({ type, label, shortLabel }) => (
-                                <button
-                                    key={type}
-                                    onClick={() => handleAddQuiz(type)}
-                                    className="cursor-pointer min-w-fit h-fit px-4 py-2 bg-white border border-gray-200 rounded-lg hover:ring-2 hover:ring-violet-400 transition-all duration-200 text-zinc-600 flex gap-2 items-center"
-                                >
-                                    <span className="hidden md:block">{label}</span>
-                                    <span className="block md:hidden">{shortLabel}</span>
-                                </button>
-                            ))}
-                        </div>
-                    )}
                 </>
             )}
+
+            <>
+                {/* Quiz Questions Count */}
+                <div className='flex items-center gap-4 mt-6'>
+                    <h2 className='text-lg text-zinc-700 font-semibold'>
+                        Quiz Questions
+                    </h2>
+                    <h4 className='h-6 w-6 text-violet-500 bg-violet-100 rounded-full text-center'>
+                        {fields.length} {/* Use fields.length for the count */}
+                    </h4>
+                </div>
+
+                {/* Render All Added Quizzes */}
+                <div>
+                    {fields.map((quiz, index) => ( // RENDER FROM `fields` ARRAY
+                        <div key={quiz.id} className="flex flex-col gap-5">
+                            {renderQuiz(quiz, index + 1, index)}
+                        </div>
+                    ))}
+                </div>
+
+                {/*Add  Quiz Type Buttons MCQ, True/False, Fill Blank (at the bottom for easy reach out) */}
+                {(fields.length > 0) && (
+                    <div className="flex gap-4 mt-5">
+                        {quizTypes.map(({ type, label, shortLabel }) => (
+                            <button
+                                key={type}
+                                onClick={() => handleAddQuiz(type)}
+                                className="cursor-pointer min-w-fit h-fit px-4 py-2 bg-white border border-gray-200 rounded-lg hover:ring-2 hover:ring-violet-400 transition-all duration-200 text-zinc-600 flex gap-2 items-center"
+                            >
+                                <span className="hidden md:block">{label}</span>
+                                <span className="block md:hidden">{shortLabel}</span>
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </>
+
 
         </section>
     )

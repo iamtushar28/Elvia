@@ -25,7 +25,7 @@ const Hero = () => {
             <div className='w-full md:w-[385px] h-fit px-6 py-8 bg-white shadow rounded-xl flex flex-col gap-4 justify-center items-center relative group'>
 
                 {/* cat animation */}
-                <iframe src="https://lottie.host/embed/01e470b1-58fa-43e8-946e-4acabffc1289/ymLLwubY9D.lottie" className='w-20 h-auto absolute -top-[77%] right-0 hidden group-hover:block'></iframe>
+                <iframe src="https://lottie.host/embed/01e470b1-58fa-43e8-946e-4acabffc1289/ymLLwubY9D.lottie" className='w-14 h-auto absolute -top-[65.5%] right-0 hidden group-hover:block'></iframe>
 
                 {/* join room component */}
                 <JoinRoom />
