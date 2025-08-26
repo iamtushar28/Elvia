@@ -21,7 +21,7 @@ const AiQuizGeneration = ({ onQuestionsGenerated }) => {
 
   // State to manage loading status during AI generation
   const [isLoadingAI, setIsLoadingAI] = useState(false);
-  
+
   // State to store any errors during AI generation
   const [aiError, setAiError] = useState(null);
 
@@ -32,10 +32,6 @@ const AiQuizGeneration = ({ onQuestionsGenerated }) => {
 
   // Function to handle the "Generate Questions" button click
   const handleGenerateQuestions = async () => {
-    if (!prompt.trim()) {
-      onError("Please enter a prompt to generate questions.");
-      return;
-    }
 
     setIsLoadingAI(true); // Notify parent component that loading has started
     setAiError(null); // Clear any previous errors
@@ -53,7 +49,7 @@ const AiQuizGeneration = ({ onQuestionsGenerated }) => {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('API Error:', errorData.error);
-        onError(errorData.error || 'Failed to generate questions. Please try again.');
+        aiError(errorData.error || 'Failed to generate questions. Please try again.');
         return;
       }
 
@@ -66,7 +62,7 @@ const AiQuizGeneration = ({ onQuestionsGenerated }) => {
 
     } catch (error) {
       console.error('Fetch Error:', error);
-      onError('A network error occurred. Please check your connection and try again.');
+      aiError('A network error occurred. Please check your connection and try again.');
     } finally {
       setIsLoadingAI(false); // Notify parent component that loading has finished
     }
@@ -100,7 +96,7 @@ const AiQuizGeneration = ({ onQuestionsGenerated }) => {
       {/* Generate questions button */}
       <button
         onClick={handleGenerateQuestions} // Call the handler on click
-        disabled={isLoadingAI}
+        disabled={isLoadingAI || !prompt.trim()}
         className='w-fit px-4 py-2 text-white bg-[#8570C0] rounded-lg cursor-pointer transition-all duration-300 flex gap-2 items-center hover:bg-[#6c59a0] disabled:opacity-50 disabled:cursor-not-allowed' // Added hover effect
       >
         <BsStars />
@@ -110,14 +106,14 @@ const AiQuizGeneration = ({ onQuestionsGenerated }) => {
       {/* Loading and Error Indicators for AI Generation */}
       {isLoadingAI && (
         <div className="mt-4 p-3 w-full h-fit bg-violet-50 text-violet-800 rounded-lg flex items-center gap-2">
-          <RiLoader2Fill className="animate-spin text-xl" /> 
+          <RiLoader2Fill className="animate-spin text-xl" />
           Generating questions with AI...
         </div>
       )}
       {aiError && (
         <div className="mt-4 p-3 w-full h-fit bg-red-50 text-red-500 rounded-lg flex flex-wrap items-center gap-2">
-          <IoWarningOutline className="text-xl" />  
-          Error: {aiError} Lorem ipsum dolor 
+          <IoWarningOutline className="text-xl" />
+          Error: {aiError} Lorem ipsum dolor
         </div>
       )}
 
