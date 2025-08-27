@@ -74,6 +74,7 @@ const CreateProfile = ({ roomId }) => {
                 userId: currentUserId,
                 name: username.trim(),
                 avatar: `/avatars/avatar-${selectedAvatarId}.webp`,
+                hasFinishedQuiz: false, // This new field tracks the user's quiz status
                 joinedAt: new Date(),
             };
 
@@ -84,8 +85,6 @@ const CreateProfile = ({ roomId }) => {
 
             // NEW: Save the playerProfile to localStorage for access on the /game page
             localStorage.setItem('currentPlayerProfile', JSON.stringify(playerProfile));
-
-            console.log("User joined quiz and profile saved:", playerProfile);
             router.push(`/game?roomId=${roomId.trim().toUpperCase()}&_quizId=${quizDocId}`);
 
         } catch (err) {
@@ -121,7 +120,7 @@ const CreateProfile = ({ roomId }) => {
             {/* join button */}
             <button
                 onClick={handleJoinQuiz}
-                className='w-full md:w-80 h-12 text-white bg-[#917EC9] hover:bg-[#9f84ee] rounded-lg cursor-pointer transition-all duration-200 flex justify-center items-center disabled:cursor-not-allowed'
+                className='w-full md:w-80 h-12 text-white bg-[#917EC9] hover:bg-[#9f84ee] rounded-lg cursor-pointer transition-all duration-200 flex gap-2 justify-center items-center disabled:cursor-not-allowed'
                 disabled={isLoading || !username.trim() || !selectedAvatarId}
             >
                 {isLoading ?

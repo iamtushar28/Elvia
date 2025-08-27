@@ -18,7 +18,7 @@ const RoomComponent = () => {
   const searchParams = useSearchParams();
   const [quizId, setQuizId] = useState(null);
   const [roomIdFromDb, setRoomIdFromDb] = useState(null);
-  const [joinedUsers, setJoinedUsers] = useState([]);
+  const [joinedUsers, setJoinedUsers] = useState({});
   const [quizName, setQuizName] = useState("Loading Quiz...");
   const [quizStatus, setQuizStatus] = useState("waiting");
   const [playersFinishedCount, setPlayersFinishedCount] = useState(0);
@@ -42,13 +42,12 @@ const RoomComponent = () => {
           if (docSnap.exists()) {
             const quizData = docSnap.data();
             setRoomIdFromDb(quizData.roomId);
-            setJoinedUsers(Object.values(quizData.joinedUsers || {}));
+            setJoinedUsers(quizData.joinedUsers || {});
             setQuizName(quizData.quizName || "Untitled Quiz");
             setQuizStatus(quizData.status || "waiting");
             setPlayersFinishedCount(quizData.playersFinishedCount || 0);
             setQuestions(quizData.questions || []); // NEW: Update questions state
             setIsLoadingQuizData(false);
-            console.log("Real-time quiz data update:", quizData);
           } else {
             setError("Quiz not found or has been deleted.");
             setIsLoadingQuizData(false);
@@ -77,7 +76,8 @@ const RoomComponent = () => {
   }
 
   const allPlayersFinished =
-    joinedUsers.length > 0 && playersFinishedCount === joinedUsers.length;
+    Object.keys(joinedUsers).length > 0 &&
+    playersFinishedCount === Object.keys(joinedUsers).length;
 
   return (
     <>
@@ -85,7 +85,7 @@ const RoomComponent = () => {
       <Hero
         roomId={roomIdFromDb}
         quizId={quizId}
-        joinedUsers={joinedUsers}
+        joinedUsers={Object.values(joinedUsers)}
         quizName={quizName}
         quizStatus={quizStatus}
         db={db}

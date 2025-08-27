@@ -13,17 +13,17 @@ const TrueFalseQuestionCard = ({ questionData, onAnswerSubmit }) => {
     };
 
     const handleNextQuestion = async () => {
-        if (selectedAnswer === null) {
-            alert("Please select an answer (True or False) before proceeding.");
-            return;
-        }
 
         setIsSubmitting(true);
         try {
+            // Convert the boolean selectedAnswer to a string ('True' or 'False')
+            const answerAsString = selectedAnswer ? 'True' : 'False';
+
             // Call the onAnswerSubmit function passed from GameRoomManager
             // Pass the question's unique ID and the user's selected answer (true/false)
-            await onAnswerSubmit(questionData.id || questionData.questionText, selectedAnswer);
+            await onAnswerSubmit(questionData.id || questionData.questionText, answerAsString);
             setSelectedAnswer(null); // Reset selection for next question
+
         } catch (error) {
             console.error("Error handling next question:", error);
             // Error is already handled by GameRoomManager's onAnswerSubmit
@@ -96,7 +96,7 @@ const TrueFalseQuestionCard = ({ questionData, onAnswerSubmit }) => {
                             <RiLoader2Fill className="animate-spin text-xl" />
                         ) : (
                             <>
-                               Submit
+                                Submit
                             </>
                         )}
                     </button>

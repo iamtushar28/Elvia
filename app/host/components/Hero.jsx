@@ -85,12 +85,12 @@ const Hero = ({
             <iframe
                 loading="lazy"
                 sandbox="allow-scripts allow-same-origin"
-                className={`h-48 ${quizStatus === 'ended' ? 'hidden' : ''}`}
+                className={`h-48 ${(quizStatus === 'ended') || (joinedUsers.length > 0) ? 'hidden' : ''}`}
                 src="https://lottie.host/embed/f4b2a214-a8a6-4eac-9471-a03bf7f63e70/VlMWbTHlQb.lottie">
             </iframe>
 
             {/* Conditional display area for joined users (hidden when quiz ends) */}
-            {(quizStatus === 'waiting') && (
+            {(quizStatus === 'waiting' || quizStatus === 'started') && (
                 <HostWaitingArea
                     roomId={roomId}
                     quizName={quizName}

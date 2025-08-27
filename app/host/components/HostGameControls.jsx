@@ -83,6 +83,9 @@ const HostGameControls = ({
                             isCorrect = playerAnswer.userAnswer === question.correctOptionIndex;
                         } else if (question.type === 'truefalse') {
                             isCorrect = playerAnswer.userAnswer === question.correctAnswer;
+                            const submittedAnswerString = String(playerAnswer.userAnswer || '').trim().toLowerCase();
+                            const correctAnswerString = String(question.correctAnswer || '').trim().toLowerCase();
+                            isCorrect = submittedAnswerString === correctAnswerString;
                         } else if (question.type === 'fillblank') {
                             const submittedAnswerString = String(playerAnswer.userAnswer || '').trim().toLowerCase();
                             const correctAnswerString = String(question.correctAnswer || '').trim().toLowerCase();

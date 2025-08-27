@@ -1,12 +1,14 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { FaCircleCheck } from "react-icons/fa6";
+import { GoDotFill } from "react-icons/go";
 
 // A helper function to generate a random position
 const getRandomPosition = () => {
     // Define the boundaries based on the provided points
-    const minTop = 14;
+    const minTop = 16;
     const maxTop = 78;
-    const minLeft = 4;
+    const minLeft = 6;
     const maxLeft = 96;
 
     // Generate a random top value within the range [14, 78]
@@ -40,7 +42,7 @@ const JoinedUserCard = ({ user }) => {
             }}
             className='flex flex-col items-center gap-2'
         >
-            {/* user image */}
+            {/* player avatar */}
             <div className='user-bg-blob flex justify-center items-center'>
                 <Image
                     src={user.avatar}
@@ -52,8 +54,17 @@ const JoinedUserCard = ({ user }) => {
             </div>
 
             {/* name */}
-            <div className='w-fit px-4 py-1 text-sm md:text-base text-[#8570C0] bg-white rounded-3xl shadow'>
+            <div className='w-fit px-4 py-1 text-sm md:text-base text-[#8570C0] bg-white rounded-3xl shadow flex items-center gap-2'>
+
+                {/* player's name */}
                 <p className='capitalize'>{user.name}</p>
+
+                {/* quiz completed by player indicator */}
+                {user.hasFinishedQuiz && (
+                    <p className='capitalize'>
+                        <FaCircleCheck />
+                    </p>
+                )}
             </div>
         </div>
     );

@@ -48,40 +48,44 @@ const HostWaitingArea = ({ joinedUsers }) => {
 
     // Effect to calculate positions for new users
     useEffect(() => {
-        const newPositionedUsers = [...positionedUsers];
-        let changed = false;
+        setPositionedUsers(prevPositionedUsers => {
+            const newPositionedUsers = [];
 
-        joinedUsers.forEach(user => {
-            const existingPositionedUser = newPositionedUsers.find(pu => pu.userId === user.userId);
+            // Create a Map for quick lookups of existing users by their userId
+            const positionedUsersMap = new Map(prevPositionedUsers.map(user => [user.userId, user]));
 
-            if (!existingPositionedUser) {
-                let newPosition;
-                let overlap = true;
-                let attempts = 0;
-                const MAX_ATTEMPTS = 50;
+            joinedUsers.forEach(user => {
+                const existingPositionedUser = positionedUsersMap.get(user.userId);
 
-                while (overlap && attempts < MAX_ATTEMPTS) {
-                    newPosition = getRandomPositionInBoundary();
-                    overlap = checkOverlap(newPosition, newPositionedUsers);
-                    attempts++;
-                }
-
-                if (!overlap) {
-                    newPositionedUsers.push({ ...user, position: { top: `${newPosition.top}%`, left: `${newPosition.left}%` } });
-                    changed = true;
+                if (existingPositionedUser) {
+                    // If the user exists, update their data but keep the same position
+                    newPositionedUsers.push({
+                        ...user,
+                        position: existingPositionedUser.position
+                    });
                 } else {
-                    console.warn(`Could not find non-overlapping position for user ${user.name} after ${MAX_ATTEMPTS} attempts.`);
-                    newPositionedUsers.push({ ...user, position: { top: `${newPosition.top}%`, left: `${newPosition.left}%` } });
-                    changed = true;
+                    // New user: find a non-overlapping position
+                    let newPosition;
+                    let overlap = true;
+                    let attempts = 0;
+                    const MAX_ATTEMPTS = 50;
+
+                    while (overlap && attempts < MAX_ATTEMPTS) {
+                        newPosition = getRandomPositionInBoundary();
+                        overlap = checkOverlap(newPosition, newPositionedUsers);
+                        attempts++;
+                    }
+
+                    // If an overlap is still found, use the last generated position
+                    newPositionedUsers.push({
+                        ...user,
+                        position: { top: `${newPosition.top}%`, left: `${newPosition.left}%` }
+                    });
                 }
-            }
+            });
+            return newPositionedUsers;
         });
-
-        if (changed || newPositionedUsers.length !== positionedUsers.length) {
-            setPositionedUsers(newPositionedUsers);
-        }
-
-    }, [joinedUsers]); // Only depends on joinedUsers
+    }, [joinedUsers]);
 
     return (
         <>

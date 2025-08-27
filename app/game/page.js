@@ -167,6 +167,8 @@ const GameRoomManager = () => {
         );
         await updateDoc(quizRef, {
           playersFinishedCount: increment(1),
+          // Update the specific user's status within the joinedUsers map
+          [`joinedUsers.${currentPlayerProfile.userId}.hasFinishedQuiz`]: true,
         });
       }
     } catch (error) {
