@@ -269,7 +269,7 @@ const GameRoomManager = () => {
           />
 
           {/* end game button */}
-          <div className="w-full flex justify-center items-center">
+          <div className="w-full flex justify-center items-center mb-5">
             <Link
               href={"/"}
               className="px-3 text-sm md:px-4 py-2 mb-6 mt-6 text-red-500 bg-red-100 hover:scale-95 rounded-lg transition-all duration-200"

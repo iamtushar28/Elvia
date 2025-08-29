@@ -2,18 +2,19 @@
 
 import React from 'react';
 import Image from 'next/image'; // Ensure Image is imported
+import { AiOutlineTrophy } from "react-icons/ai";
 
 const HostResultsDisplay = ({ joinedUsers, maxPossibleScore }) => {
 
     // Define the max height in pixels for the score bar (h-32 is 128px in Tailwind default)
-    const maxBarHeightPx = 200;
+    const maxBarHeightPx = 220;
 
     return (
-        <div className="text-center">
+        <div className="text-start md:text-center mt-[66px] py-22">
 
             <h3 className="text-xl font-bold text-zinc-800 mb-4">Final Scores</h3>
-            <div className="flex flex-wrap justify-center items-end gap-6">
-                {joinedUsers.sort((a, b) => (b.score || 0) - (a.score || 0)).map(user => {
+            <div className="grid grid-cols-3 md:flex justify-center items-end gap-6">
+                {joinedUsers.sort((a, b) => (b.score || 0) - (a.score || 0)).map((user, index) => {
 
                     // Calculate bar height based on score
                     const scorePercentage = maxPossibleScore > 0 ? (user.score || 0) / maxPossibleScore : 0;
@@ -33,14 +34,34 @@ const HostResultsDisplay = ({ joinedUsers, maxPossibleScore }) => {
                                 style={{ height: `${barHeight}px` }} // Apply dynamic height
                             >
                                 {/* Optional: Display score on the bar if it's tall enough */}
-                                {barHeight > 20 && (user.score || 0)}
+                                {barHeight > 20 &&
+                                    <>
+                                        <div className='flex flex-col justify-center items-center'>
+                                            {/* trophy icon */}
+                                            <p>
+                                                {index < 3 && (
+                                                    <AiOutlineTrophy
+                                                        className={`text-3xl ${['text-yellow-400', 'text-zinc-200', 'text-green-300'][index]}`}
+                                                    />
+                                                )}
+                                            </p>
+                                            {/* rank */}
+                                            <p className={`text-xl font-semibold mb-1 mt-1`} >
+                                                {index + 1}
+                                                <span className='text-sm'>
+                                                    {['st', 'nd', 'rd'][index] || 'th'}
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </>
+                                }
                             </div>
 
                             {/* name */}
                             <p className='font-semibold capitalize text-zinc-800 text-center text-sm truncate w-full'>{user.name}</p>
 
                             {/* points */}
-                            <p className='-mt-2 text-sm text-zinc-500'>{user.score || 0} pts</p>
+                            <p className='-mt-2 text-sm text-zinc-600'>{user.score || 0} pts</p>
 
                         </div>
                     );

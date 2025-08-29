@@ -71,7 +71,7 @@ const EndQuizButton = ({ quizId, db }) => {
             {/* quiz delete confirmation modal */}
             {openDeleteQuizModal && (
                 <div className='flex justify-center items-center px-3 absolute bottom-20 right-0 md:right-4'>
-                    <div className='h-auto w-full md:w-96 p-4 bg-white shadow rounded-lg'>
+                    <div className='h-auto w-full md:w-[28rem] p-4 bg-white shadow rounded-lg'>
                         <p className='text-sm md:text-base text-zinc-500'>Are you sure you want to <span className='font-semibold'>end</span> the quiz and <span className='font-semibold'>delete</span> it permanently? This action cannot be undone.</p>
                         <div className='mt-2 flex gap-2 justify-end'>
                             {/* cancel deletion */}
