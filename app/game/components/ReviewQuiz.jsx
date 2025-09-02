@@ -11,6 +11,7 @@ const ReviewQuiz = ({ quizId, currentPlayerProfile, questions, db, onCloseReview
   const [reviewData, setReviewData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     const prepareReviewData = async () => {
@@ -30,6 +31,8 @@ const ReviewQuiz = ({ quizId, currentPlayerProfile, questions, db, onCloseReview
           .map(doc => doc.data())
           .filter(ans => ans.userId === currentPlayerProfile.userId);
 
+        let correctAnswersCount = 0;
+
         // Combine quiz questions with the player's answers
         const combinedReviewData = questions.map((question, index) => {
           const playerAnswer = playerAnswers.find(ans => (ans.questionId === (question.id || question.questionText)));
@@ -46,6 +49,12 @@ const ReviewQuiz = ({ quizId, currentPlayerProfile, questions, db, onCloseReview
               const correctAnswerString = String(question.correctAnswer || '').trim().toLowerCase();
               isCorrect = submittedAnswerString === correctAnswerString;
             }
+
+            // Increment the correct answers count if the answer is correct
+            if (isCorrect) {
+              correctAnswersCount++;
+            }
+
           }
 
           return {
@@ -54,8 +63,10 @@ const ReviewQuiz = ({ quizId, currentPlayerProfile, questions, db, onCloseReview
             isCorrect: isCorrect,
             questionNumber: index + 1
           };
+
         });
         setReviewData(combinedReviewData);
+        setScore(correctAnswersCount); // Set the calculated score
         setIsLoading(false);
       } catch (err) {
         console.error("Failed to prepare review data:", err);
@@ -79,10 +90,26 @@ const ReviewQuiz = ({ quizId, currentPlayerProfile, questions, db, onCloseReview
     return <div className="text-center text-zinc-500 mt-10">No questions to review.</div>;
   }
 
+  // calculating score percentage
+  const scorePercentage = (score / questions.length) * 100;
+
   return (
     <div className='w-full h-auto flex flex-col gap-8 justify-center items-center p-4'>
-      <h2 className="text-3xl font-bold text-violet-600 my-4">Quiz Review</h2>
-      <div className="w-full h-fit flex flex-col justify-center items-center gap-6 md:gap-10">
+      <h2 className="text-3xl font-bold text-violet-400 mt-4 -mb-2">Quiz Review</h2>
+
+      {/* quiz score */}
+      <div>{score}/{questions.length}</div>
+      {/* score bar */}
+      <div className='w-72 h-3 -mt-6 bg-violet-100 rounded-3xl'>
+        <div
+          className='h-3 bg-violet-400 rounded-3xl'
+          style={{ width: `${scorePercentage}%` }}
+        >
+        </div>
+      </div>
+
+      {/* review quizes */}
+      <div className="w-full h-fit flex flex-col justify-center items-center gap-6">
         {reviewData.map((item, index) => {
           const { question, playerAnswer, isCorrect, questionNumber } = item;
 

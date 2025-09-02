@@ -3,10 +3,10 @@ import { MdDone, MdOutlineAdd } from "react-icons/md";
 
 const ReviewTrueFalse = ({ questionNumber, questionData, playerAnswer, isCorrect }) => {
     return (
-        <div className='w-full md:w-[70%] h-fit px-4 py-6 md:p-10 bg-white border border-zinc-200 rounded-lg flex flex-col gap-6 md:gap-8 relative'>
+        <div className='w-full md:w-[70%] h-fit px-4 py-6 md:p-10 bg-white border border-zinc-200 rounded-2xl flex flex-col gap-6 md:gap-8 relative'>
 
             {/* question */}
-            <div className='flex gap-2 items-start mt-5 md:mt-0'>
+            <div className='flex gap-2 items-start mt-5 md:mt-3'>
 
                 <h4 className='md:text-lg font-semibold'>
                     {questionNumber}.
@@ -19,10 +19,10 @@ const ReviewTrueFalse = ({ questionNumber, questionData, playerAnswer, isCorrect
             </div>
 
             {/* answers */}
-            <div className='flex flex-col gap-4 md:gap-6'>
+            <div className='flex flex-col gap-4'>
 
                 <button
-                    className={`w-full h-fit py-3 px-2 md:px-4 md:py-4 border-1 rounded-lg flex justify-start items-center gap-2 md:gap-4 cursor-pointer transition-all duration-300
+                    className={`w-full h-fit py-3 px-2 md:px-4 md:py-4 border-1 rounded-xl flex justify-start items-center gap-2 md:gap-4 cursor-pointer transition-all duration-300
                     ${(questionData.correctAnswer == 'True') ? 'border-green-400 bg-green-50/50' :
                             (questionData.correctAnswer != 'True' && playerAnswer == 'True') ?
                                 'border-red-400 bg-red-50/50'
@@ -32,7 +32,7 @@ const ReviewTrueFalse = ({ questionNumber, questionData, playerAnswer, isCorrect
                     `}>
 
                     {/* option true */}
-                    <div className={`min-h-6 min-w-6 md:min-h-8 md:min-w-8 rounded-full flex justify-center items-center ${questionData.correctAnswer == 'True' ? 'text-white bg-green-500'
+                    <div className={`min-h-6 min-w-6 md:min-h-8 md:min-w-8 text-sm md:text-base rounded-full flex justify-center items-center ${questionData.correctAnswer == 'True' ? 'text-white bg-green-500'
                         : (questionData.correctAnswer != 'True' && playerAnswer == 'True') ?
                             'text-white bg-red-500'
                             :
@@ -70,7 +70,7 @@ const ReviewTrueFalse = ({ questionNumber, questionData, playerAnswer, isCorrect
                 </button>
 
                 <button
-                    className={`w-full h-fit py-3 px-2 md:px-4 md:py-4 border-1 rounded-lg flex justify-start items-center gap-2 md:gap-4 cursor-pointer transition-all duration-300
+                    className={`w-full h-fit py-3 px-2 md:px-4 md:py-4 border-1 rounded-xl flex justify-start items-center gap-2 md:gap-4 cursor-pointer transition-all duration-300
                     ${(questionData.correctAnswer == 'False') ? 'border-green-400 bg-green-50/50' :
                             (questionData.correctAnswer != 'False' && playerAnswer == 'False') ?
                                 'border-red-400 bg-red-50/50'
@@ -80,7 +80,7 @@ const ReviewTrueFalse = ({ questionNumber, questionData, playerAnswer, isCorrect
                     `}>
 
                     {/* option False */}
-                    <div className={`min-h-6 min-w-6 md:min-h-8 md:min-w-8 rounded-full flex justify-center items-center ${questionData.correctAnswer == 'False' ? 'text-white bg-green-500'
+                    <div className={`min-h-6 min-w-6 md:min-h-8 md:min-w-8 text-sm md:text-base rounded-full flex justify-center items-center ${questionData.correctAnswer == 'False' ? 'text-white bg-green-500'
                         : (questionData.correctAnswer != 'False' && playerAnswer == 'False') ?
                             'text-white bg-red-500'
                             :
