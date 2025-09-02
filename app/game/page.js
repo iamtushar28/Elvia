@@ -24,6 +24,7 @@ import WaitingScreen from "./components/WaitingScreen";
 import DefaultError from "../components/DefaultError";
 import LoadingQuiz from "../components/LoadingQuiz";
 import QuizScoreboard from "./components/QuizScoreboard";
+import ReviewQuiz from "./components/ReviewQuiz";
 import Link from "next/link";
 
 const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
@@ -41,6 +42,7 @@ const GameRoomManager = () => {
   const [currentPlayerProfile, setCurrentPlayerProfile] = useState(null);
   const [error, setError] = useState(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [isReviewing, setIsReviewing] = useState(false);
 
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -261,23 +263,42 @@ const GameRoomManager = () => {
       )}
 
       {/* quiz scoreboard component */}
-      {quizStatus === "ended" && (
+      {quizStatus === "ended" && isReviewing == false && (
         <>
           <QuizScoreboard
             currentPlayers={currentPlayers}
             maxPossibleScore={maxPossibleScore}
           />
 
-          {/* end game button */}
-          <div className="w-full flex justify-center items-center mb-5">
+          {/* end/reviwe game button */}
+          <div className="w-full flex gap-3 justify-center items-center mb-2">
             <Link
               href={"/"}
-              className="px-3 text-sm md:px-4 py-2 mb-6 mt-6 text-red-500 bg-red-100 hover:scale-95 rounded-lg transition-all duration-200"
+              className="px-3 text-sm md:px-4 py-2 text-red-500 bg-red-100 hover:scale-95 rounded-lg transition-all duration-200"
             >
               End Quiz
             </Link>
+            <button
+              onClick={() => setIsReviewing(true)}
+              className="px-3 text-sm md:px-4 py-2 text-violet-500 bg-violet-100 hover:scale-95 rounded-lg transition-all duration-200 cursor-pointer"
+            >
+              Review Quiz
+            </button>
           </div>
         </>
+      )}
+
+      {/* review quiz section */}
+      {isReviewing && (
+        <ReviewQuiz
+          {...{
+            quizId,
+            currentPlayerProfile,
+            questions,
+            db,
+            onCloseReview: () => setIsReviewing(false),
+          }}
+        />
       )}
     </main>
   );

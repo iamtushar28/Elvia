@@ -48,7 +48,7 @@ const McqQuestionCard = ({ questionData, onAnswerSubmit }) => {
                         key={index} // Use index as key for options within a question
                         onClick={() => handleOptionSelect(index)}
                         className={`
-                            w-full h-fit py-3 px-2 md:px-4 md:py-4 border-2 rounded-lg flex justify-start items-start gap-2 md:gap-4 cursor-pointer transition-all duration-300
+                            w-full h-fit py-3 px-2 md:px-4 md:py-4 border-1 rounded-lg flex justify-start items-start gap-2 md:gap-4 cursor-pointer transition-all duration-300
                             ${selectedOptionIndex === index ? 'bg-violet-100 border-violet-500' : 'border-zinc-200 hover:bg-violet-50 hover:border-violet-400'}
                             ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}
                         `}

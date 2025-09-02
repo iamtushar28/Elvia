@@ -44,7 +44,7 @@ const FillBlankQuestionCard = ({ questionData, onAnswerSubmit }) => {
                     placeholder='Type your answer here...'
                     value={typedAnswer}
                     onChange={(e) => setTypedAnswer(e.target.value)}
-                    className='w-full h-14 md:h-16 px-4 border-2 border-zinc-200 hover:border-violet-400 rounded-lg flex justify-start items-center gap-4 outline-none cursor-pointer transition-all duration-300'
+                    className='w-full h-14 md:h-16 px-4 border-1 border-zinc-200 hover:ring-2 hover:ring-violet-400 hover:border-violet-400 rounded-lg flex justify-start items-center gap-4 outline-none cursor-pointer transition-all duration-300'
                     disabled={isSubmitting} // Disable input while submitting
                 />
 

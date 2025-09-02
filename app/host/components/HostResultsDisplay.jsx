@@ -12,13 +12,16 @@ const HostResultsDisplay = ({ joinedUsers, maxPossibleScore }) => {
     return (
         <div className="text-start md:text-center mt-[66px] py-22">
 
-            <h3 className="text-xl font-bold text-zinc-800 mb-4">Final Scores</h3>
-            <div className="grid grid-cols-3 md:flex justify-center items-end gap-6">
+            <h3 className="text-xl ml-4 md:ml-0 font-bold text-zinc-800 mb-4">Final Scores</h3>
+            <div className="flex flex-wrap justify-center items-end gap-8">
                 {joinedUsers.sort((a, b) => (b.score || 0) - (a.score || 0)).map((user, index) => {
+
+                    // Set a minimum height for the top three ranks to ensure visibility of the trophy and rank
+                    const minHeight = index < 3 ? 90 : 1;
 
                     // Calculate bar height based on score
                     const scorePercentage = maxPossibleScore > 0 ? (user.score || 0) / maxPossibleScore : 0;
-                    const barHeight = Math.max(1, Math.round(scorePercentage * maxBarHeightPx)); // Ensure min height of 1px
+                    const barHeight = Math.max(minHeight, Math.round(scorePercentage * maxBarHeightPx)); // Ensure min height of 1px
 
                     return (
                         <div key={user.userId} className='w-20 h-auto flex flex-col gap-2 justify-center items-center'>
@@ -33,7 +36,7 @@ const HostResultsDisplay = ({ joinedUsers, maxPossibleScore }) => {
                                 className='w-full bg-violet-400 rounded-t-lg flex items-end justify-center text-white font-bold text-sm'
                                 style={{ height: `${barHeight}px` }} // Apply dynamic height
                             >
-                                {/* Optional: Display score on the bar if it's tall enough */}
+                                {/* Optional: Display rank on the bar if it's tall enough */}
                                 {barHeight > 20 &&
                                     <>
                                         <div className='flex flex-col justify-center items-center'>

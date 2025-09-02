@@ -47,7 +47,7 @@ const TrueFalseQuestionCard = ({ questionData, onAnswerSubmit }) => {
                 <button
                     onClick={() => handleAnswerSelect(true)}
                     className={`
-                        w-full h-14 md:h-16 px-4 border-2 rounded-lg flex justify-start items-center gap-4 cursor-pointer transition-all duration-300
+                        w-full h-14 md:h-16 px-4 border-1 rounded-lg flex justify-start items-center gap-4 cursor-pointer transition-all duration-300
                         ${selectedAnswer === true ? 'bg-violet-100 border-violet-500' : 'border-zinc-200 hover:bg-violet-50 hover:border-violet-400'}
                         ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}
                     `}
@@ -66,7 +66,7 @@ const TrueFalseQuestionCard = ({ questionData, onAnswerSubmit }) => {
                 <button
                     onClick={() => handleAnswerSelect(false)}
                     className={`
-                        w-full h-14 md:h-16 px-4 border-2 rounded-lg flex justify-start items-center gap-4 cursor-pointer transition-all duration-300
+                        w-full h-14 md:h-16 px-4 border-1 rounded-lg flex justify-start items-center gap-4 cursor-pointer transition-all duration-300
                         ${selectedAnswer === false ? 'bg-violet-100 border-violet-500' : 'border-zinc-200 hover:bg-violet-50 hover:border-violet-400'}
                         ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}
                     `}

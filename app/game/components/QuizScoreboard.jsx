@@ -13,17 +13,17 @@ const QuizScoreboard = ({ currentPlayers, maxPossibleScore }) => {
     );
 
     return (
-        <div className="game-ended-screen p-4 text-center pt-24">
+        <div className="game-ended-screen p-4 text-center pt-16">
             <h3 className="text-2xl font-bold text-zinc-800 mb-4">Final Scores:</h3>
             <div className="flex flex-wrap justify-center items-end gap-6 p-4 rounded-lg overflow-x-auto">
                 {sortedPlayers.map((user, index) => {
+
+                    // Set a minimum height for the top three ranks to ensure visibility of the trophy and rank
+                    const minHeight = index < 3 ? 90 : 1;
+
                     // Calculate bar height based on score percentage
-                    const scorePercentage =
-                        maxPossibleScore > 0 ? (user.score || 0) / maxPossibleScore : 0;
-                    const barHeight = Math.max(
-                        1,
-                        Math.round(scorePercentage * maxBarHeightPx)
-                    ); // Ensure a minimum height of 1px
+                    const scorePercentage = maxPossibleScore > 0 ? (user.score || 0) / maxPossibleScore : 0;
+                    const barHeight = Math.max(minHeight, Math.round(scorePercentage * maxBarHeightPx)); // Ensure a minimum height of 1px
 
                     return (
                         <div

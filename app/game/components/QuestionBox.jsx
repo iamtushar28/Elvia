@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react'; // Import useState and useEf
 import { LuTimer } from "react-icons/lu";
 
 // Import your specific question card components
-import McqQuestionCard from './McqQuestionCard';
-import TrueFalseQuestionCard from './TrueFalseQuestionCard';
-import FillBlankQuestionCard from './FillBlankQuestionCard';
+import McqQuestionCard from './reusable/McqQuestionCard';
+import TrueFalseQuestionCard from './reusable/TrueFalseQuestionCard';
+import FillBlankQuestionCard from './reusable/FillBlankQuestionCard';
 
 const QuestionBox = ({ question, questionNumber, totalQuestions, onAnswerSubmit, currentPlayerProfile }) => {
     // State for the countdown timer
