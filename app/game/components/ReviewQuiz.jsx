@@ -152,7 +152,7 @@ const ReviewQuiz = ({ quizId, currentPlayerProfile, questions, db, onCloseReview
 
       <button
         onClick={onCloseReview}
-        className="px-3 text-sm md:px-4 py-2 mb-4 text-violet-500 bg-violet-100 hover:scale-95 rounded-lg transition-all duration-200 cursor-pointer"
+        className="px-3 text-sm md:px-4 py-2 mb-4 text-white bg-violet-500 hover:bg-violet-600 rounded-lg transition-all duration-200 cursor-pointer"
       >
         Close Review Quiz
       </button>

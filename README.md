@@ -2,7 +2,7 @@
 
 A real-time, interactive multiplayer quiz application where hosts can create custom quizzes with various question types, and players can join using a unique room PIN to compete. Scores are calculated and displayed in real-time once the quiz ends.
 
-## [Host Link🔗](https://elvia-ai.vercel.app)
+## [www.elvia.com🔗](https://elvia-ai.vercel.app)
 
 
 ## ✨ Features
@@ -41,6 +41,12 @@ A real-time, interactive multiplayer quiz application where hosts can create cus
 
 ### Dynamic Results Display
 - Both host and players see a real-time leaderboard with scores and dynamic score bars when the quiz ends.
+
+### Result Review & 
+- players can review their submited answer.
+
+### Smart AI Explanation
+- players can get Smart consise Explanation of their answers by AI
 
 ### Firebase Integration
 - Uses Firestore for real-time database capabilities and data persistence.

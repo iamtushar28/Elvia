@@ -120,7 +120,7 @@ const CreateProfile = ({ roomId }) => {
             {/* join button */}
             <button
                 onClick={handleJoinQuiz}
-                className='w-full md:w-80 h-12 text-white bg-[#917EC9] hover:bg-[#9f84ee] rounded-lg cursor-pointer transition-all duration-200 flex gap-2 justify-center items-center disabled:cursor-not-allowed'
+                className='w-full md:w-80 h-12 text-white bg-[#917EC9] hover:bg-[#9f84ee] rounded-lg cursor-pointer transition-all duration-200 flex gap-2 justify-center items-center disabled:cursor-not-allowed disabled:opacity-50'
                 disabled={isLoading || !username.trim() || !selectedAvatarId}
             >
                 {isLoading ?

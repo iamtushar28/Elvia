@@ -26,6 +26,8 @@ import LoadingQuiz from "../components/LoadingQuiz";
 import QuizScoreboard from "./components/QuizScoreboard";
 import ReviewQuiz from "./components/ReviewQuiz";
 import Link from "next/link";
+import { CiViewList } from "react-icons/ci";
+import { IoExitOutline } from "react-icons/io5";
 
 const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
 
@@ -274,14 +276,16 @@ const GameRoomManager = () => {
           <div className="w-full flex gap-3 justify-center items-center mb-2">
             <Link
               href={"/"}
-              className="px-3 text-sm md:px-4 py-2 text-red-500 bg-red-100 hover:scale-95 rounded-lg transition-all duration-200"
+              className="px-3 text-sm md:px-4 py-2 text-white bg-red-500 hover:scale- rounded-lg transition-all duration-200 flex gap-1 items-center"
             >
+              <IoExitOutline className="text-xl"/>
               End Quiz
             </Link>
             <button
               onClick={() => setIsReviewing(true)}
-              className="px-3 text-sm md:px-4 py-2 text-violet-500 bg-violet-100 hover:scale-95 rounded-lg transition-all duration-200 cursor-pointer"
+              className="px-3 text-sm md:px-3 py-2 text-white bg-violet-500 hover:bg-violet-600 rounded-lg transition-all duration-200 cursor-pointer flex gap-1 items-center"
             >
+              <CiViewList className="text-xl" />
               Review Quiz
             </button>
           </div>
