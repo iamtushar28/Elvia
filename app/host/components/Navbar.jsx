@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { LuCopy } from "react-icons/lu";
 import { IoArrowBackOutline } from "react-icons/io5";
+import Image from 'next/image';
 import Link from 'next/link';
 
 const Navbar = ({ roomId, quizName }) => {
@@ -56,6 +57,10 @@ const Navbar = ({ roomId, quizName }) => {
                     <IoArrowBackOutline />
                 </Link>
 
+                {/* logo */}
+                <Link href={'/'}>
+                    <Image src={'/logoFace.png'} alt='logoFace.png' height={40} width={40} />
+                </Link>
                 <h1 className='text-xl font-semibold'>
                     Elvia Creator
                 </h1>

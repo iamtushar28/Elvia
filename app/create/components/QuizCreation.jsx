@@ -29,7 +29,7 @@ const QuizCreation = () => {
     });
 
     // --- State for component's UI (not form data) ---
-    const [timeLimit, setTimeLimit] = useState(30);
+    const [timeLimit, setTimeLimit] = useState(60);
     const [manualCreation, setManualCreation] = useState(true);
     const [aiGeneration, setAIGeneration] = useState(false);
 

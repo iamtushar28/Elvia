@@ -1,5 +1,6 @@
 import React from 'react'
 import { MdDone, MdOutlineAdd } from "react-icons/md";
+import AiExplain from './AiExplain';
 
 const ReviewMCQ = ({ questionNumber, questionData, playerAnswer, isCorrect }) => {
 
@@ -62,16 +63,16 @@ const ReviewMCQ = ({ questionNumber, questionData, playerAnswer, isCorrect }) =>
             {
               playerAnswer == index && (
                 index == questionData.correctOptionIndex ? (
-                  <p className='text-xs md:text-sm text-green-500'>Your Answer</p>
+                  <p className='text-xs md:text-sm text-green-500 hidden md:block'>Your Answer</p>
                 ) : (
-                  <p className='text-xs md:text-sm text-red-500'>Your Answer</p>
+                  <p className='text-xs md:text-sm text-red-500 hidden md:block'>Your Answer</p>
                 )
               )
             }
 
             {
               index == questionData.correctOptionIndex && playerAnswer != index && (
-                <p className='text-xs md:text-sm text-green-500'>Correct Answer</p>
+                <p className='text-xs md:text-sm text-green-500 hidden md:block'>Correct Answer</p>
               )
             }
 
@@ -105,6 +106,13 @@ const ReviewMCQ = ({ questionNumber, questionData, playerAnswer, isCorrect }) =>
         }
 
       </div>
+
+      {/* get AI Explanation */}
+      <AiExplain
+        question={questionData.questionText}
+        options={questionData.options.map(o => o.optionText)}
+        correctAnswer={questionData.options[questionData.correctOptionIndex]}
+      />
 
     </div>
   )

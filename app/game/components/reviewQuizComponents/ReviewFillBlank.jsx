@@ -1,4 +1,5 @@
 import React from 'react'
+import AiExplain from './AiExplain';
 import { MdDone, MdOutlineAdd } from "react-icons/md";
 
 const ReviewFillBlank = ({ questionNumber, questionData, playerAnswer, isCorrect }) => {
@@ -40,7 +41,7 @@ const ReviewFillBlank = ({ questionNumber, questionData, playerAnswer, isCorrect
                         {/* options */}
                         <p className='text-start'>{playerAnswer}</p>
 
-                        <p className={`text-xs md:text-sm ${submittedAnswerString == correctAnswerString ? 'text-green-500' : 'text-red-500'}`}>Your Answer</p>
+                        <p className={`text-xs md:text-sm hidden md:block ${submittedAnswerString == correctAnswerString ? 'text-green-500' : 'text-red-500'}`}>Your Answer</p>
                     </div>
 
                 </button>
@@ -58,7 +59,7 @@ const ReviewFillBlank = ({ questionNumber, questionData, playerAnswer, isCorrect
                             {/* options */}
                             <p className='text-start'>{questionData.correctAnswer}</p>
 
-                            <p className='text-xs md:text-sm text-green-500'>Correct Answer</p>
+                            <p className='text-xs md:text-sm text-green-500 hidden md:block'>Correct Answer</p>
                         </div>
 
                     </button>
@@ -89,6 +90,9 @@ const ReviewFillBlank = ({ questionNumber, questionData, playerAnswer, isCorrect
                 }
 
             </div>
+
+            {/* get AI Explanation */}
+            <AiExplain question={questionData.questionText} correctAnswer={questionData.correctAnswer} />
 
         </div>
     )

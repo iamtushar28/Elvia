@@ -1,4 +1,5 @@
 import React from 'react'
+import AiExplain from './AiExplain';
 import { MdDone, MdOutlineAdd } from "react-icons/md";
 
 const ReviewTrueFalse = ({ questionNumber, questionData, playerAnswer, isCorrect }) => {
@@ -57,12 +58,12 @@ const ReviewTrueFalse = ({ questionNumber, questionData, playerAnswer, isCorrect
 
                         {(playerAnswer == 'True') && (<>
 
-                            {questionData.correctAnswer == 'True' ? <p className='text-xs md:text-sm text-green-500'>Your Answer</p> : <p className='text-xs md:text-sm text-red-500'>Your Answer</p>}
+                            {questionData.correctAnswer == 'True' ? <p className='text-xs md:text-sm text-green-500 hidden md:block'>Your Answer</p> : <p className='text-xs md:text-sm text-red-500 hidden md:block'>Your Answer</p>}
 
                         </>)}
 
                         {questionData.correctAnswer == 'True' && playerAnswer != 'True' && (
-                            <p className='text-xs md:text-sm text-green-500'>Correct Answer</p>
+                            <p className='text-xs md:text-sm text-green-500 hidden md:block'>Correct Answer</p>
                         )}
 
                     </div>
@@ -105,12 +106,12 @@ const ReviewTrueFalse = ({ questionNumber, questionData, playerAnswer, isCorrect
 
                         {(playerAnswer == 'False') && (<>
 
-                            {questionData.correctAnswer == 'False' ? <p className='text-xs md:text-sm text-green-500'>Your Answer</p> : <p className='text-xs md:text-sm text-red-500'>Your Answer</p>}
+                            {questionData.correctAnswer == 'False' ? <p className='text-xs md:text-sm text-green-500 hidden md:block'>Your Answer</p> : <p className='text-xs md:text-sm text-red-500 hidden md:block'>Your Answer</p>}
 
                         </>)}
 
                         {questionData.correctAnswer == 'False' && playerAnswer != 'False' && (
-                            <p className='text-xs md:text-sm text-green-500'>Correct Answer</p>
+                            <p className='text-xs md:text-sm text-green-500 hidden md:block'>Correct Answer</p>
                         )}
 
                     </div>
@@ -141,6 +142,9 @@ const ReviewTrueFalse = ({ questionNumber, questionData, playerAnswer, isCorrect
                 }
 
             </div>
+
+            {/* get AI Explanation */}
+            <AiExplain question={questionData.questionText} correctAnswer={questionData.correctAnswer} />
 
         </div>
     )

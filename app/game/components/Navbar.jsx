@@ -11,7 +11,7 @@ const Navbar = ({ roomId, quizName }) => {
 
                 {/* logo */}
                 <Link href={'/'}>
-                    <Image src={'/logo.png'} alt='logo' height={80} width={100} />
+                    <Image src={'/logo.png'} alt='logo' height={130} width={150} />
                 </Link>
 
             </div>

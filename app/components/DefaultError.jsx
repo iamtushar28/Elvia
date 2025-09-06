@@ -5,7 +5,7 @@ import ElviaLogo from './ElviaLogo'
 
 const DefaultError = ({ errorMessage }) => {
     return (
-        <section className='w-full min-h-screen h-auto px-4 flex flex-col gap-12 justify-center items-center'>
+        <section className='w-full min-h-screen h-auto px-4 flex flex-col gap-6 justify-center items-center'>
 
             {/* Animated Background component */}
             <AnimatedBackground />

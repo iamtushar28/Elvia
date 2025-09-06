@@ -33,7 +33,7 @@ const WaitingScreen = ({roomId, currentPlayerProfile}) => {
             </div>
 
             {/* waiting message */}
-            <div className='text-center mt-12'>
+            <div className='text-center mt-8'>
 
                 <h2 className='text-xl font-semibold text-zinc-800'>Waiting for Host</h2>
                 <p className='text-zinc-500'>The quiz will begin when the host starts the game...</p>

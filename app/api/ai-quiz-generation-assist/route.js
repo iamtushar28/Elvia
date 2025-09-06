@@ -56,14 +56,14 @@ export async function POST(req) {
           },
           "required": ["type", "questionText"]
         },
-        maxItems: 5 // Explicitly limit the number of items to 5 in the response schema
+        maxItems: 6 // Explicitly limit the number of items to 5 in the response schema
       }
     };
 
     // Construct a general prompt for the AI to interpret the user's request
     // and generate questions in the specified JSON format.
-    // The prompt is shortened and explicitly states the 5-question limit.
-    const prompt = `From "${userPrompt}", generate only up to 5 quiz questions. Use 'mcq', 'truefalse', or 'fillblank' types. MCQ must have 4 options and correctOptionIndex (0-3). True/False needs 'True' or 'False' as correctAnswer. Fill-in-the-blank needs '___' for blank and a correctAnswer. Output JSON array adhering to schema.`;
+    // The prompt is shortened and explicitly states the 6-question limit.
+    const prompt = `From "${userPrompt}", generate only up to 6 quiz questions. Output JSON array adhering to schema.`;
 
     // Prepare the payload for the Generative AI API call.
     const payload = {
@@ -134,7 +134,7 @@ export async function POST(req) {
         let correctAnswer = '';
 
         if (q.type === 'mcq') {
-          timeLimit = 30; // Default time limit for MCQ
+          timeLimit = 60; // Default time limit for MCQ
           // Ensure exactly 4 options, populating with empty strings if necessary.
           options = Array.isArray(q.options) ? q.options.slice(0, 4) : [];
           while (options.length < 4) {
@@ -146,17 +146,17 @@ export async function POST(req) {
           }
           correctAnswer = ''; // MCQ uses correctOptionIndex
         } else if (q.type === 'truefalse') {
-          timeLimit = 20; // Default time limit for True/False
+          timeLimit = 60; // Default time limit for True/False
           correctAnswer = q.correctAnswer || '';
           if (!['True', 'False'].includes(correctAnswer)) { // Basic validation
             correctAnswer = ''; // Reset if AI provides an invalid true/false answer
           }
         } else if (q.type === 'fillblank') {
-          timeLimit = 45; // Default time limit for Fill-in-the-Blank
+          timeLimit = 60; // Default time limit for Fill-in-the-Blank
           correctAnswer = q.correctAnswer || '';
         } else {
           // Fallback for unexpected quizType or if AI doesn't provide a type
-          timeLimit = 30;
+          timeLimit = 60;
           q.type = 'mcq'; // Default to MCQ if type is missing or invalid from AI
           // Ensure 4 options for default MCQ if type was originally missing
           options = Array.isArray(q.options) ? q.options.slice(0, 4) : [];

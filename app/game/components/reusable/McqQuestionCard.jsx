@@ -58,7 +58,7 @@ const McqQuestionCard = ({ questionData, onAnswerSubmit }) => {
                         {/* options index A/B/C/D */}
                         <div className={`
                             min-h-8 min-w-8 rounded-full flex justify-center items-center
-                            ${selectedOptionIndex === index ? 'bg-violet-500 text-white' : 'text-violet-400 bg-violet-100'}
+                            ${selectedOptionIndex === index ? 'bg-violet-500 text-white' : 'text-violet-600 bg-violet-100'}
                         `}>
                             {optionLetters[index]}
                         </div>

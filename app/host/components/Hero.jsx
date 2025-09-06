@@ -52,7 +52,7 @@ const Hero = ({
     const isShowResultsButtonEnabled = quizStatus === 'started' && allPlayersFinished;
 
     return (
-        <section className='w-full h-auto min-h-[100vh] flex gap-3 flex-col justify-center items-center relative'>
+        <section className='w-full h-auto min-h-[100vh] flex gap-3 flex-col justify-center items-center relative overflow-hidden'>
 
             {/* Background animation component */}
             <AnimatedBackground />

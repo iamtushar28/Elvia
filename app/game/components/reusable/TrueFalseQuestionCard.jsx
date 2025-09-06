@@ -56,7 +56,7 @@ const TrueFalseQuestionCard = ({ questionData, onAnswerSubmit }) => {
                 >
                     <div className={`
                         h-8 w-8 rounded-full flex justify-center items-center
-                        ${selectedAnswer === true ? 'bg-violet-500 text-white' : 'text-violet-400 bg-violet-100'}
+                        ${selectedAnswer === true ? 'bg-violet-500 text-white' : 'text-violet-600 bg-violet-100'}
                     `}>
                         T
                     </div>
@@ -75,7 +75,7 @@ const TrueFalseQuestionCard = ({ questionData, onAnswerSubmit }) => {
                 >
                     <div className={`
                         h-8 w-8 rounded-full flex justify-center items-center
-                        ${selectedAnswer === false ? 'bg-violet-500 text-white' : 'text-violet-400 bg-violet-100'}
+                        ${selectedAnswer === false ? 'bg-violet-500 text-white' : 'text-violet-600 bg-violet-100'}
                     `}>
                         F
                     </div>
