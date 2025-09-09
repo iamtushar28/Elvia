@@ -32,7 +32,6 @@ export async function POST(req) {
 
     // Define the JSON schema for the AI's response. This schema guides the model
     // to output an array of quiz question objects, each with specific properties.
-    // Note: 'timeLimit' is added client-side as per the user's 'append' function example.
     const generationConfig = {
       responseMimeType: "application/json",
       responseSchema: {
@@ -128,13 +127,11 @@ export async function POST(req) {
       // desired client-side 'append' format, including default time limits
       // and ensuring correct array sizes/null values for conditional fields.
       const quizQuestions = parsedQuizData.map(q => {
-        let timeLimit;
         let options = [];
         let correctOptionIndex = null;
         let correctAnswer = '';
 
         if (q.type === 'mcq') {
-          timeLimit = 60; // Default time limit for MCQ
           // Ensure exactly 4 options, populating with empty strings if necessary.
           options = Array.isArray(q.options) ? q.options.slice(0, 4) : [];
           while (options.length < 4) {
@@ -146,17 +143,14 @@ export async function POST(req) {
           }
           correctAnswer = ''; // MCQ uses correctOptionIndex
         } else if (q.type === 'truefalse') {
-          timeLimit = 60; // Default time limit for True/False
           correctAnswer = q.correctAnswer || '';
           if (!['True', 'False'].includes(correctAnswer)) { // Basic validation
             correctAnswer = ''; // Reset if AI provides an invalid true/false answer
           }
         } else if (q.type === 'fillblank') {
-          timeLimit = 60; // Default time limit for Fill-in-the-Blank
           correctAnswer = q.correctAnswer || '';
         } else {
           // Fallback for unexpected quizType or if AI doesn't provide a type
-          timeLimit = 60;
           q.type = 'mcq'; // Default to MCQ if type is missing or invalid from AI
           // Ensure 4 options for default MCQ if type was originally missing
           options = Array.isArray(q.options) ? q.options.slice(0, 4) : [];
@@ -169,7 +163,6 @@ export async function POST(req) {
 
         return {
           type: q.type,
-          timeLimit,
           questionText: q.questionText || '',
           options,
           correctOptionIndex,

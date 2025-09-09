@@ -95,8 +95,12 @@ const QuizCreation = () => {
     // Adding AI-generated questions
     const handleAIQuestionsGenerated = (generatedQuestions) => {
         generatedQuestions.forEach(question => {
-            // Append each AI-generated question to the form array
-            append(question);
+            // Override the AI's time limit with your manual time limit
+            const questionWithManualTime = {
+                ...question,
+                timeLimit: timeLimit,
+            };
+            append(questionWithManualTime);
         });
     };
 
@@ -105,12 +109,12 @@ const QuizCreation = () => {
             <section className='w-full px-3 md:px-10 lg:px-36 mt-8 mb-20'>
 
                 {/* quiz creation method manual/ai-genaration */}
-                <div className='w-full h-14 px-2 bg-zinc-50 rounded-lg flex justify-between items-center'>
+                <div className='w-full p-1 bg-violet-50/60 rounded-lg flex justify-between items-center'>
 
                     {/* manual quiz genaration button */}
                     <button
                         onClick={handleManualClick}
-                        className={`w-[50%] h-10 text-sm md:text-base ${manualCreation ? 'text-white bg-[#8570C0]' : 'text-zinc-600'} rounded-lg cursor-pointer flex justify-center items-center gap-2`}>
+                        className={`w-[50%] p-2 text-sm md:text-base ${manualCreation ? 'text-white bg-[#8570C0]' : 'text-zinc-600'} rounded-lg cursor-pointer flex justify-center items-center gap-2`}>
                         <LuBookText className='text-lg' />
                         Manual Creation
                     </button>
@@ -118,7 +122,7 @@ const QuizCreation = () => {
                     {/* ai quiz genaration button */}
                     <button
                         onClick={handleAIClick}
-                        className={`w-[50%] h-10 text-sm md:text-base ${aiGeneration ? 'text-white bg-[#8570C0]' : 'text-zinc-600'} rounded-lg cursor-pointer flex justify-center items-center gap-2`}>
+                        className={`w-[50%] p-2 text-sm md:text-base ${aiGeneration ? 'text-white bg-[#8570C0]' : 'text-zinc-600'} rounded-lg cursor-pointer flex justify-center items-center gap-2`}>
                         <RiRobot3Line className='text-xl' />
                         AI Generation
                     </button>
@@ -130,6 +134,9 @@ const QuizCreation = () => {
                     <>
                         <AiQuizGeneration
                             onQuestionsGenerated={handleAIQuestionsGenerated} // Pass callback for generated questions
+                            // Pass timeLimit and setTimeLimit as props
+                            timeLimit={timeLimit}
+                            setTimeLimit={setTimeLimit}
                         />
                     </>
                 )}
@@ -175,7 +182,6 @@ const QuizCreation = () => {
                         </div>
                     </>
                 )}
-
 
                 {/* Quiz Questions Count */}
                 <div className='flex items-center gap-4 mt-6'>

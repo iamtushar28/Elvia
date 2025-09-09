@@ -95,7 +95,7 @@ const ReviewQuiz = ({ quizId, currentPlayerProfile, questions, db, onCloseReview
 
   return (
     <div className='w-full h-auto flex flex-col gap-8 justify-center items-center p-4'>
-      <h2 className="text-3xl font-bold text-violet-400 mt-4 -mb-2">Quiz Review</h2>
+      <h2 className="text-3xl font-bold text-violet-600 mt-4 -mb-2">Quiz Review</h2>
 
       {/* quiz score */}
       <div>{score}/{questions.length}</div>
@@ -150,6 +150,7 @@ const ReviewQuiz = ({ quizId, currentPlayerProfile, questions, db, onCloseReview
         })}
       </div>
 
+      {/* close review button */}
       <button
         onClick={onCloseReview}
         className="px-3 text-sm md:px-4 py-2 mb-4 text-white bg-violet-500 hover:bg-violet-600 rounded-lg transition-all duration-200 cursor-pointer"

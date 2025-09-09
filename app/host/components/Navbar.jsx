@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { LuCopy } from "react-icons/lu";
 import { IoArrowBackOutline } from "react-icons/io5";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -73,14 +74,15 @@ const Navbar = ({ roomId, quizName }) => {
                 <button
                     onClick={handleCopyUrl}
                     className='py-2 px-3 font-semibold bg-white/20 hover:bg-white/10 rounded-lg flex items-center gap-2 cursor-pointer transition-all duration-200'>
-                    {copiedUrlStatus ? (
-                        <span>Copied!</span> // Show "Copied!" text
-                    ) : (
-                        <>
-                            Join at : elvia.com
+                    <>
+                        Join at : elvia.com
+                        {copiedUrlStatus ? (
+                            // Show "Copied!" status
+                            <IoIosCheckmarkCircle className='text-lg' />
+                        ) : (
                             <LuCopy className='text-lg' />
-                        </>
-                    )}
+                        )}
+                    </>
                 </button>
 
                 {/* game pin */}
@@ -88,14 +90,15 @@ const Navbar = ({ roomId, quizName }) => {
                     onClick={handleCopyRoomId}
                     className='py-2 px-3 font-semibold bg-white/20 hover:bg-white/10 rounded-lg flex items-center gap-2 cursor-pointer transition-all duration-200'
                 >
-                    {copiedStatus ? (
-                        <span>Copied!</span> // Show "Copied!" text
-                    ) : (
-                        <>
-                            Game PIN : {roomId ? roomId : 'Loading...'}
+                    <>
+                        Game PIN : {roomId ? roomId : 'Loading...'}
+                        {copiedStatus ? (
+                            // Show "Copied!" status
+                            <IoIosCheckmarkCircle className='text-lg' />
+                        ) : (
                             <LuCopy className='text-lg' />
-                        </>
-                    )}
+                        )}
+                    </>
                 </button>
 
             </div>

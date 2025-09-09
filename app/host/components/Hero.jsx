@@ -11,6 +11,7 @@ import HostResultsDisplay from './HostResultsDisplay';
 import HostGameControls from './HostGameControls';
 import AnimatedBackground from '../../components/AnimatedBackground';
 import MusicPlayer from './MusicPlayer';
+import { IoIosCheckmarkCircle } from "react-icons/io";
 
 // Hero component receives various props to manage and display quiz host view
 const Hero = ({
@@ -69,14 +70,14 @@ const Hero = ({
                 <button
                     onClick={handleCopyRoomId}
                     className='md:hidden text-sm w-fit px-4 py-2 text-[#8570C0] bg-white rounded-3xl shadow flex items-center gap-2 cursor-pointer'>
-                    {copiedStatus ? (
-                        <span>Copied!</span>
-                    ) : (
-                        <>
-                            Game PIN : {roomId ? <span className='font-semibold'>{roomId}</span> : 'Loading...'}
+                    <>
+                        Game PIN : {roomId ? <span className='font-semibold'>{roomId}</span> : 'Loading...'}
+                        {copiedStatus ? (
+                           <IoIosCheckmarkCircle className='text-lg' />
+                        ) : (
                             <LuCopy className='text-lg' />
-                        </>
-                    )}
+                        )}
+                    </>
                 </button>
 
             </div>

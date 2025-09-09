@@ -3,6 +3,7 @@ import { RiRobot3Line } from 'react-icons/ri'; // Assuming you have react-icons 
 import { BsStars } from 'react-icons/bs';   // Assuming you have react-icons installed
 import { RiLoader2Fill } from "react-icons/ri"; //loading icon
 import { IoWarningOutline } from "react-icons/io5"; //warning icon
+import { LuTimer } from "react-icons/lu"; //timer icon
 
 /**
  * AiQuizGeneration Component
@@ -14,7 +15,7 @@ import { IoWarningOutline } from "react-icons/io5"; //warning icon
  * @param {function} props.onQuestionsGenerated - Callback function to receive generated questions.
  */
 
-const AiQuizGeneration = ({ onQuestionsGenerated }) => {
+const AiQuizGeneration = ({ onQuestionsGenerated, timeLimit, setTimeLimit }) => {
 
   // State to store the user's prompt from the textarea
   const [prompt, setPrompt] = useState('');
@@ -91,17 +92,34 @@ const AiQuizGeneration = ({ onQuestionsGenerated }) => {
         value={prompt} // Bind textarea value to state
         onChange={handlePromptChange} // Handle input changes
         className='p-4 w-full border border-zinc-300 outline-none rounded-lg placeholder:text-zinc-400 hover:ring-2 hover:ring-violet-400 transition-all duration-300'
-      ></textarea>
-
-      {/* Generate questions button */}
-      <button
-        onClick={handleGenerateQuestions} // Call the handler on click
-        disabled={isLoadingAI || !prompt.trim()}
-        className='w-fit px-4 py-2 text-white bg-[#8570C0] rounded-lg cursor-pointer transition-all duration-300 flex gap-2 items-center hover:bg-[#6c59a0] disabled:opacity-50 disabled:cursor-not-allowed' // Added hover effect
       >
-        <BsStars />
-        Generate Questions
-      </button>
+      </textarea>
+
+      <div className='flex gap-3 md:gap-0 flex-col md:flex-row md:justify-between'>
+        {/* Generate questions button */}
+        <button
+          onClick={handleGenerateQuestions} // Call the handler on click
+          disabled={isLoadingAI || !prompt.trim()}
+          className='w-fit px-4 py-2 text-white bg-[#8570C0] rounded-lg cursor-pointer transition-all duration-300 flex gap-2 items-center hover:bg-[#6c59a0] disabled:opacity-50 disabled:cursor-not-allowed' // Added hover effect
+        >
+          <BsStars />
+          Generate Questions
+        </button>
+
+        {/* set time for quiz question */}
+        <div className='flex items-center gap-3'>
+          <h2 className='text-xs text-zinc-800 flex gap-1 items-center'>
+            <LuTimer className='text-[#8570C0] text-lg' />
+            Time Limit (sec)
+          </h2>
+          <input
+            type="number"
+            value={timeLimit}
+            onChange={(e) => setTimeLimit(Number(e.target.value))}
+            className='w-20 h-10 px-3 border border-gray-200 outline-none rounded-lg hover:ring-2 hover:ring-violet-400 transition-all duration-200'
+          />
+        </div>
+      </div>
 
       {/* Loading and Error Indicators for AI Generation */}
       {isLoadingAI && (
@@ -113,7 +131,7 @@ const AiQuizGeneration = ({ onQuestionsGenerated }) => {
       {aiError && (
         <div className="mt-4 p-3 w-full h-fit bg-red-50 text-red-500 rounded-lg flex flex-wrap items-center gap-2">
           <IoWarningOutline className="text-xl" />
-          Error: {aiError} Lorem ipsum dolor
+          Error: {aiError}
         </div>
       )}
 

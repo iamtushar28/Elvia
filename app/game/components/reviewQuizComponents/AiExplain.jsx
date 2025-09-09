@@ -51,7 +51,7 @@ const AiExplain = ({ question, options, correctAnswer }) => {
             <button
                 onClick={getExplanation}
                 disabled={isLoading || explanation}
-                className='w-fit px-3 py-2 text-sm text-white bg-[#a281fe] hover:bg-[#9069fd] disabled:opacity-50 disabled:cursor-not-allowed rounded-lg cursor-pointer flex items-center gap-1 transition-all duration-200'
+                className='w-fit px-3 py-2 text-sm text-white bg-violet-500 hover:bg-violet-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg cursor-pointer flex items-center gap-1 transition-all duration-200'
             >
                 <RiRobot3Line className='text-xl' />
                 AI Explanation

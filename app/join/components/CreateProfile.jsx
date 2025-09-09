@@ -3,11 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AvatarSelector from './AvatarSelector';
-import { db, auth } from '../../firebase/firebase';
-import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebase';
+import { collection, query, where, getDocs, doc, runTransaction } from 'firebase/firestore';
 import { RiLoader2Fill } from "react-icons/ri";
+import { IoWarningOutline } from "react-icons/io5";
 
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const MAX_PLAYERS = 10;
+const ERROR_TIMEOUT = 5000; // 5 seconds
 
 const CreateProfile = ({ roomId }) => {
     const [username, setUsername] = useState('');
@@ -16,7 +19,10 @@ const CreateProfile = ({ roomId }) => {
     const [error, setError] = useState('');
     const router = useRouter();
 
-    const [currentUserId, setCurrentUserId] = useState(null); // Persistent userId
+    const [currentUserId, setCurrentUserId] = useState(null);
+
+    // Use a ref to hold the timeout ID so it can be cleared
+    const errorTimeoutRef = React.useRef(null);
 
     useEffect(() => {
         let storedUserId = localStorage.getItem('playerUserId');
@@ -31,27 +37,31 @@ const CreateProfile = ({ roomId }) => {
         setSelectedAvatarId(getRandomAvatarId());
     }, []);
 
+    const showTimedError = (message) => {
+        // Clear any existing timeout to prevent conflicts
+        if (errorTimeoutRef.current) {
+            clearTimeout(errorTimeoutRef.current);
+        }
+
+        setError(message);
+
+        // Set a new timeout to clear the error message
+        errorTimeoutRef.current = setTimeout(() => {
+            setError('');
+        }, ERROR_TIMEOUT);
+    };
+
     const handleJoinQuiz = async () => {
         setError('');
         setIsLoading(true);
 
-        if (!username.trim()) {
-            setError('Please enter your name.');
-            setIsLoading(false);
-            return;
-        }
-        if (!selectedAvatarId) {
-            setError('Please select an avatar.');
-            setIsLoading(false);
-            return;
-        }
         if (!roomId) {
-            setError('Room ID is missing. Please go back and try again.');
+            showTimedError('Room ID is missing. Please go back and try again.');
             setIsLoading(false);
             return;
         }
         if (!currentUserId) {
-            setError('Player ID could not be initialized. Please try refreshing.');
+            showTimedError('Player ID could not be initialized. Please try refreshing.');
             setIsLoading(false);
             return;
         }
@@ -62,34 +72,57 @@ const CreateProfile = ({ roomId }) => {
             const querySnapshot = await getDocs(q);
 
             if (querySnapshot.empty) {
-                setError('Quiz not found with this Room ID.');
+                showTimedError('Quiz not found with this Room ID.');
                 setIsLoading(false);
                 return;
             }
 
             const quizDoc = querySnapshot.docs[0];
             const quizDocId = quizDoc.id;
+            const quizDocRef = doc(db, `artifacts/${appId}/public/data/quizzes`, quizDocId);
 
-            const playerProfile = {
+            await runTransaction(db, async (transaction) => {
+                const docSnap = await transaction.get(quizDocRef);
+                const quizData = docSnap.data();
+                const joinedUsers = quizData.joinedUsers || {};
+                const userCount = Object.keys(joinedUsers).length;
+
+                // Check if the user is already joined
+                if (joinedUsers[currentUserId]) {
+                    return; // User is already in the game
+                }
+
+                // Check if the room is full
+                if (userCount >= MAX_PLAYERS) {
+                    throw new Error('Room is full. Join another quiz.');
+                }
+
+                const playerProfile = {
+                    userId: currentUserId,
+                    name: username.trim(),
+                    avatar: `/avatars/avatar-${selectedAvatarId}.webp`,
+                    hasFinishedQuiz: false,
+                    joinedAt: new Date(),
+                };
+
+                // Update the document with the new user profile
+                joinedUsers[currentUserId] = playerProfile;
+                transaction.update(quizDocRef, { joinedUsers });
+            });
+
+            // After successful transaction
+            localStorage.setItem('currentPlayerProfile', JSON.stringify({
                 userId: currentUserId,
                 name: username.trim(),
                 avatar: `/avatars/avatar-${selectedAvatarId}.webp`,
-                hasFinishedQuiz: false, // This new field tracks the user's quiz status
+                hasFinishedQuiz: false,
                 joinedAt: new Date(),
-            };
-
-            const quizRef = doc(db, `artifacts/${appId}/public/data/quizzes`, quizDocId);
-            await updateDoc(quizRef, {
-                [`joinedUsers.${currentUserId}`]: playerProfile
-            });
-
-            // NEW: Save the playerProfile to localStorage for access on the /game page
-            localStorage.setItem('currentPlayerProfile', JSON.stringify(playerProfile));
+            }));
             router.push(`/game?roomId=${roomId.trim().toUpperCase()}&_quizId=${quizDocId}`);
 
         } catch (err) {
             console.error("Error during join process:", err);
-            setError('An error occurred. Please try again.');
+            showTimedError(err.message || 'An unexpected error occurred. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -97,13 +130,12 @@ const CreateProfile = ({ roomId }) => {
 
     return (
         <>
-            {/* select avatar component  */}
             <AvatarSelector
                 selectedAvatarId={selectedAvatarId}
                 setSelectedAvatarId={setSelectedAvatarId}
             />
 
-            {/* name of player */}
+            {/* name input */}
             <div className='w-full flex justify-center'>
                 <input
                     type="text"
@@ -115,16 +147,24 @@ const CreateProfile = ({ roomId }) => {
                 />
             </div>
 
-            {error && <p className="text-red-500 text-center text-sm mb-2">{error}</p>}
+            {/* error message */}
+            {error &&
+                <div className='w-full md:w-80 px-3 absolute top-8'>
+                    <p className="w-full h-fit p-2 text-white bg-red-500 mb-2 rounded flex items-center gap-2">
+                        <IoWarningOutline className='text-xl' />
+                        {error}
+                    </p>
+                </div>
+            }
 
-            {/* join button */}
+            {/* join room button */}
             <button
                 onClick={handleJoinQuiz}
-                className='w-full md:w-80 h-12 text-white bg-[#917EC9] hover:bg-[#9f84ee] rounded-lg cursor-pointer transition-all duration-200 flex gap-2 justify-center items-center disabled:cursor-not-allowed disabled:opacity-50'
+                className='w-full md:w-80 h-12 text-white bg-[#917EC9] hover:bg-[#9e89db] rounded-lg cursor-pointer transition-all duration-200 flex gap-2 justify-center items-center disabled:cursor-not-allowed disabled:opacity-70'
                 disabled={isLoading || !username.trim() || !selectedAvatarId}
             >
                 {isLoading ?
-                    <>Joining  <RiLoader2Fill className='text-lg animate-spin' /></>
+                    <>Joining <RiLoader2Fill className='text-lg animate-spin' /></>
                     :
                     <>Join</>
                 }
