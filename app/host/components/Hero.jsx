@@ -12,6 +12,7 @@ import HostGameControls from './HostGameControls';
 import AnimatedBackground from '../../components/AnimatedBackground';
 import MusicPlayer from './MusicPlayer';
 import { IoIosCheckmarkCircle } from "react-icons/io";
+import QuizQRCode from './QuizQRCode';
 
 // Hero component receives various props to manage and display quiz host view
 const Hero = ({
@@ -62,8 +63,8 @@ const Hero = ({
             <div className='w-full absolute right-2 md:right-4 top-22 flex flex-col gap-3 items-end'>
 
                 {/* Quiz name display */}
-                <div className='w-fit px-4 text-sm py-2 text-[#8570C0] bg-white rounded-3xl shadow'>
-                    <p>Quiz Name: <span className='font-semibold'>{quizName}</span></p>
+                <div className='max-w-48 min-w-fit px-4 text-sm py-2 text-[#8570C0] bg-white rounded-3xl shadow'>
+                    <p className='max-w-48 truncate'>Quiz Name: <span className='font-semibold'>{quizName}</span></p>
                 </div>
 
                 {/* Game PIN button for mobile screens (copies ID to clipboard) */}
@@ -73,12 +74,15 @@ const Hero = ({
                     <>
                         Game PIN : {roomId ? <span className='font-semibold'>{roomId}</span> : 'Loading...'}
                         {copiedStatus ? (
-                           <IoIosCheckmarkCircle className='text-lg' />
+                            <IoIosCheckmarkCircle className='text-lg' />
                         ) : (
                             <LuCopy className='text-lg' />
                         )}
                     </>
                 </button>
+
+                {/* quiz QR code */}
+                <QuizQRCode roomId={roomId} />
 
             </div>
 
@@ -153,7 +157,6 @@ const Hero = ({
                 </div>
 
             </div>
-
 
         </section >
     );

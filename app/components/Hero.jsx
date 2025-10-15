@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import React from 'react'
 import AnimatedBackground from './AnimatedBackground'
-import JoinRoom from './JoinRoom'
 import ElviaLogo from './ElviaLogo'
+import JoinRoom from './JoinRoom'
 
 const Hero = () => {
     return (
