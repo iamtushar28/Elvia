@@ -111,7 +111,7 @@ const QuizInfo = ({ totalQuestions, completeQuestions, incompleteQuestions, tota
                 {/* total user join limit indicator */}
                 <div className='w-full h-10 md:h-12 px-4 text-sm text-violet-500 bg-violet-50/50 flex gap-2 justify-start items-center rounded-lg border border-violet-400'>
                     <FiUsers />
-                    Up to 10 players can join your quiz
+                    Up to 20 players can join your quiz
                 </div>
                 
             </div>

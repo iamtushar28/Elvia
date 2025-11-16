@@ -9,7 +9,7 @@ import { RiLoader2Fill } from "react-icons/ri";
 import { IoWarningOutline } from "react-icons/io5";
 
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-const MAX_PLAYERS = 10;
+const MAX_PLAYERS = 20;
 const ERROR_TIMEOUT = 5000; // 5 seconds
 
 const CreateProfile = ({ roomId }) => {
