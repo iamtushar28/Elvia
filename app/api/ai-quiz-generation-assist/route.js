@@ -1,186 +1,182 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Initialize Generative AI client using the API key from environment variables.
-// The model 'gemini-2.5-flash-preview-05-20' is chosen for its ability to generate
-// structured JSON responses via responseSchema.
+// Initialize the Google Generative AI client with API key from environment variables.
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-05-20" });
 
-/**
- * Handles POST requests to generate quiz questions based on a user-provided prompt.
- *
- * This API endpoint takes a single 'userPrompt' string. The AI will interpret
- * the desired quiz type (MCQ, True/False, Fill-in-the-Blank), topic, and
- * number of questions from this prompt, then generate the questions
- * in a specified JSON format.
- *
- * @param {Request} req The incoming Next.js API request object.
- * @returns {Response} A JSON response containing the generated quiz questions or an error.
- */
+// Define the model instance, specifying the model name.
+const model = genAI.getGenerativeModel({
+  model: "gemini-2.5-flash",
+});
+
+// Define the POST handler for the Next.js API route.
 export async function POST(req) {
   try {
-    // Parse the request body to extract the user's prompt.
-    // Expected body: { userPrompt: string }
+    // 1. INPUT VALIDATION
+    // Parse the JSON body to get the user prompt.
     const { userPrompt } = await req.json();
 
-    // Validate the incoming prompt.
+    // Return a 400 error if the prompt is missing.
     if (!userPrompt) {
       return new Response(JSON.stringify({ error: "Missing userPrompt" }), {
-        status: 400, // Bad Request
+        status: 400,
       });
     }
 
-    // Define the JSON schema for the AI's response. This schema guides the model
-    // to output an array of quiz question objects, each with specific properties.
+    // 2. GENERATION CONFIGURATION
+    // Define the configuration to force the model to output a specific JSON structure.
     const generationConfig = {
+      // Enforce JSON output.
       responseMimeType: "application/json",
+      // Define the required structure (schema) for the JSON output.
       responseSchema: {
-        type: "ARRAY",
+        type: "ARRAY", // Root element must be a JSON array.
         items: {
-          type: "OBJECT",
+          type: "OBJECT", // Each item is a question object.
           properties: {
-            type: { "type": "STRING", "enum": ["mcq", "truefalse", "fillblank"], "description": "Type of question (mcq, truefalse, fillblank)." },
-            questionText: { "type": "STRING", "description": "The main text of the question." },
+            // Define question types (MCQ, True/False, Fill-in-the-Blank).
+            type: { type: "STRING", enum: ["mcq", "truefalse", "fillblank"] },
+            questionText: { type: "STRING" },
             options: {
-              "type": "ARRAY",
-              "items": {
-                "type": "OBJECT",
-                "properties": { "optionText": { "type": "STRING" } },
-                "required": ["optionText"]
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: { optionText: { type: "STRING" } },
+                required: ["optionText"],
               },
-              "description": "Array of 4 options for MCQ questions, empty for others."
             },
-            correctOptionIndex: { "type": "NUMBER", "description": "0-indexed position of the correct option for MCQ, null for others." },
-            correctAnswer: { "type": "STRING", "description": "Correct answer for True/False and Fill-in-the-Blank, empty for MCQ." }
+            correctOptionIndex: { type: "NUMBER" }, // For 'mcq' type.
+            correctAnswer: { type: "STRING" }, // For 'truefalse' or 'fillblank' types.
           },
-          "required": ["type", "questionText"]
+          required: ["type", "questionText"],
         },
-        maxItems: 6 // Explicitly limit the number of items to 5 in the response schema
-      }
+        maxItems: 6, // Limit the maximum number of questions generated.
+      },
     };
 
-    // Construct a general prompt for the AI to interpret the user's request
-    // and generate questions in the specified JSON format.
-    // The prompt is shortened and explicitly states the 6-question limit.
+    // Construct the prompt, explicitly instructing the model on the task and output format.
     const prompt = `From "${userPrompt}", generate only up to 6 quiz questions. Output JSON array adhering to schema.`;
 
-    // Prepare the payload for the Generative AI API call.
-    const payload = {
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: generationConfig
-    };
-
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${process.env.GOOGLE_GENAI_API_KEY}`;
-    
-    // Implement exponential backoff for robust API communication.
-    let apiResponse;
+    // 3. AI CALL WITH EXPONENTIAL BACKOFF
+    let response;
     let retries = 0;
     const maxRetries = 5;
-    let delay = 1000; // Initial delay of 1 second
+    let delay = 1000; // Initial delay of 1 second.
 
+    // Loop for retrying the API call.
     while (retries < maxRetries) {
       try {
-        apiResponse = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+        // Main call to the Gemini API.
+        response = await model.generateContent({
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          generationConfig,
         });
 
-        if (apiResponse.ok) {
-          break; // API call successful, exit retry loop.
-        } else if (apiResponse.status === 429) { // Too Many Requests error
-          retries++;
-          delay *= 2; // Double the delay for the next retry.
-          await new Promise(res => setTimeout(res, delay)); // Wait before retrying.
-        } else {
-          // For other non-retryable errors, log and return an error response.
-          const errorText = await apiResponse.text();
-          console.error(`AI Quiz Assist API Error: ${apiResponse.status} - ${errorText}`);
-          return new Response(JSON.stringify({ error: `AI quiz generation failed: ${errorText}` }), { status: apiResponse.status });
-        }
+        break; // Exit loop on successful API call.
       } catch (err) {
-        retries++;
-        delay *= 2;
-        await new Promise(res => setTimeout(res, delay));
-        console.warn(`Fetch attempt ${retries} failed, retrying...`, err.message);
-        if (retries === maxRetries) {
-          throw err; // Re-throw the error if max retries are reached.
+        // Check for rate limit (429) or quota/rate-related errors.
+        if (
+          err.status === 429 ||
+          err.message.includes("quota") ||
+          err.message.includes("rate")
+        ) {
+          retries++;
+          delay *= 2; // Double the delay (exponential backoff).
+          // Wait for the calculated delay before retrying.
+          await new Promise((res) => setTimeout(res, delay));
+          if (retries === maxRetries) throw err; // Re-throw if max retries reached.
+        } else {
+          throw err; // Re-throw for all other unexpected errors.
         }
       }
     }
 
-    // If no successful response after retries, throw an error.
-    if (!apiResponse || !apiResponse.ok) {
-        throw new Error("Failed to get a successful response from AI after multiple retries.");
+    // Throw an error if no response was received after all retries.
+    if (!response) {
+      throw new Error(
+        "Failed to get a successful response from AI after multiple retries."
+      );
     }
 
-    const result = await apiResponse.json();
+    // Extract the full response object.
+    const result = await response.response;
 
-    // Validate the structure of the AI's response before parsing.
-    if (result.candidates && result.candidates.length > 0 &&
-        result.candidates[0].content && result.candidates[0].content.parts &&
-        result.candidates[0].content.parts.length > 0) {
+    // 4. RESPONSE PROCESSING
+    // Check if the response contains content parts (i.e., the generated JSON string).
+    if (
+      result.candidates &&
+      result.candidates.length > 0 &&
+      result.candidates[0].content &&
+      result.candidates[0].content.parts &&
+      result.candidates[0].content.parts.length > 0
+    ) {
+      // Extract the raw JSON text from the response part.
       const jsonText = result.candidates[0].content.parts[0].text;
+      // Parse the JSON string into a JavaScript array of question objects.
       const parsedQuizData = JSON.parse(jsonText);
 
-      // Post-process the generated quiz data to ensure it adheres strictly to the
-      // desired client-side 'append' format, including default time limits
-      // and ensuring correct array sizes/null values for conditional fields.
-      const quizQuestions = parsedQuizData.map(q => {
+      // Map and normalize the parsed data into the final expected output structure.
+      const quizQuestions = parsedQuizData.map((q) => {
         let options = [];
         let correctOptionIndex = null;
-        let correctAnswer = '';
+        let correctAnswer = "";
 
-        if (q.type === 'mcq') {
-          // Ensure exactly 4 options, populating with empty strings if necessary.
+        if (q.type === "mcq") {
+          // Normalize MCQ options: limit to 4 and ensure 4 options exist (fill with empty if needed).
           options = Array.isArray(q.options) ? q.options.slice(0, 4) : [];
-          while (options.length < 4) {
-            options.push({ optionText: '' });
-          }
-          // Ensure correctOptionIndex is a valid 0-3 index or null.
-          if (q.correctOptionIndex !== undefined && q.correctOptionIndex !== null && q.correctOptionIndex >= 0 && q.correctOptionIndex < 4) {
+          while (options.length < 4) options.push({ optionText: "" });
+
+          // Validate and set the correct option index for MCQs.
+          if (
+            q.correctOptionIndex !== undefined &&
+            q.correctOptionIndex !== null &&
+            q.correctOptionIndex >= 0 &&
+            q.correctOptionIndex < 4
+          ) {
             correctOptionIndex = q.correctOptionIndex;
           }
-          correctAnswer = ''; // MCQ uses correctOptionIndex
-        } else if (q.type === 'truefalse') {
-          correctAnswer = q.correctAnswer || '';
-          if (!['True', 'False'].includes(correctAnswer)) { // Basic validation
-            correctAnswer = ''; // Reset if AI provides an invalid true/false answer
-          }
-        } else if (q.type === 'fillblank') {
-          correctAnswer = q.correctAnswer || '';
+        } else if (q.type === "truefalse") {
+          let ca = (q.correctAnswer || "").trim().toLowerCase();
+          // Normalize True/False answers to "True" or "False".
+          if (ca === "true") correctAnswer = "True";
+          else if (ca === "false") correctAnswer = "False";
+          else correctAnswer = "";
+        } else if (q.type === "fillblank") {
+          // Set the correct answer for fill-in-the-blank.
+          correctAnswer = q.correctAnswer || "";
         } else {
-          // Fallback for unexpected quizType or if AI doesn't provide a type
-          q.type = 'mcq'; // Default to MCQ if type is missing or invalid from AI
-          // Ensure 4 options for default MCQ if type was originally missing
+          // Fallback for unrecognized types: treat as an MCQ with empty options/index.
+          q.type = "mcq";
           options = Array.isArray(q.options) ? q.options.slice(0, 4) : [];
-          while (options.length < 4) {
-            options.push({ optionText: '' });
-          }
-          correctOptionIndex = null; // Set to null as we can't assume a correct index
-          correctAnswer = '';
+          while (options.length < 4) options.push({ optionText: "" });
+          correctOptionIndex = null;
         }
 
+        // Return the standardized question object.
         return {
           type: q.type,
-          questionText: q.questionText || '',
+          questionText: q.questionText || "",
           options,
           correctOptionIndex,
           correctAnswer,
         };
       });
 
+      // Return the final, standardized quiz questions array with a 200 status.
       return new Response(JSON.stringify(quizQuestions), { status: 200 });
-
-    } else {
-      // Handle cases where the AI response structure is unexpected or missing content.
-      console.error("AI Quiz Assist Error: Unexpected response structure from AI model.", result);
-      return new Response(JSON.stringify({ error: "AI quiz generation failed: Unexpected or empty response from AI." }), { status: 500 });
     }
 
+    // Handle case where AI call succeeded but returned unexpected or empty content.
+    return new Response(
+      JSON.stringify({
+        error:
+          "AI quiz generation failed: Unexpected or empty response from AI.",
+      }),
+      { status: 500 }
+    );
   } catch (err) {
-    // Catch and handle any errors during the process.
+    // 5. GLOBAL ERROR HANDLING
     console.error("AI Quiz Assist General Error:", err);
+    // Return a 500 error with a user-friendly message, checking for timeouts.
     return new Response(
       JSON.stringify({
         error: err.message?.includes("timeout")
